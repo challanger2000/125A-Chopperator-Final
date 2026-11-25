@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vstgui-ui-description version="1">
 <fonts><font name="Title" font-name="Arial" size="27" bold="true"/><font name="Label" font-name="Arial" size="13" bold="true"/><font name="Value" font-name="Arial" size="16" bold="true"/></fonts>
-<colors><color name="Panel" rgba="#272a2dff"/><color name="Inset" rgba="#24272aff"/><color name="Text" rgba="#e2e3e4ff"/><color name="Muted" rgba="#bfc1c4ff"/><color name="Frame" rgba="#494c50ff"/><color name="Amber" rgba="#f3ac65ff"/></colors>
+<colors><color name="Panel" rgba="#272a2dff"/><color name="Inset" rgba="#24272aff"/><color name="Text" rgba="#e2e3e4ff"/><color name="Muted" rgba="#bfc1c4ff"/><color name="Frame" rgba="#494c50ff"/><color name="Amber" rgba="#161718ff"/></colors>
 <bitmaps><bitmap name="logo" path="logo.png"/><bitmap name="logo#3x" path="logo_3x.png" scale-factor="3"/>
 <bitmap name="knobL#0.5x" path="knob_L_0.5x.png" scale-factor="0.5" multiframe-num-frames="128" mulitframe-frames-per-row="16" multiframe-size="128, 128"/>
 <bitmap name="knobL#0.75x" path="knob_L_0.75x.png" scale-factor="0.75" multiframe-num-frames="128" mulitframe-frames-per-row="16" multiframe-size="128, 128"/>
@@ -25,7 +25,7 @@
 <control-tag name="P110" tag="110"/>
 <control-tag name="P111" tag="111"/>
 <control-tag name="P112" tag="112"/>
-</control-tags><gradients><gradient name="Button"><color-stop rgba="#17191bff" start="0"/><color-stop rgba="#111315ff" start="1"/></gradient><gradient name="Selected"><color-stop rgba="#654326ff" start="0"/><color-stop rgba="#3d291aff" start="1"/></gradient></gradients>
+</control-tags><gradients><gradient name="Button"><color-stop rgba="#25272aff" start="0"/><color-stop rgba="#151719ff" start="1"/></gradient><gradient name="Selected"><color-stop rgba="#ffad50ff" start="0"/><color-stop rgba="#ed902fff" start="1"/></gradient></gradients>
 <template name="view" class="CViewContainer" origin="0, 0" size="960, 576" minSize="720, 432" maxSize="1440, 864" background-color="Panel" transparent="false">
 <view class="CView" custom-view-name="GlassFaceplate" origin="0, 0" size="960, 576" mouse-enabled="false"/>
 <view class="CView" origin="24, 10" size="84, 42" bitmap="logo" mouse-enabled="false"/>

@@ -1,7 +1,7 @@
 name: Windows x64 VST3 and core contracts
 on:
   push:
-    branches: [main]
+    branches: [main, fix/v1.0-gui-refresh]
     paths: ['src/**','tests/**','CMakeLists.txt','.github/workflows/windows.yml','tools/**','resources/**','.gitattributes']
   workflow_dispatch:
 jobs:
@@ -31,7 +31,7 @@ jobs:
           Copy-Item $source fixture-tools/ffmpeg.exe
           Get-FileHash fixture-tools/ffmpeg.exe -Algorithm SHA256 | Format-List
           (Resolve-Path fixture-tools).Path | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-      - name: Prepare original GUI resources
+      - name: Prepare and validate native GUI resources
         shell: pwsh
         run: |
           python tools/prepare_native_gui.py gui-draft
