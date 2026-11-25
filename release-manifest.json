@@ -8,7 +8,7 @@
   "status": "TECHNICAL_PACKAGE_PASS",
   "owner_designated_version": true,
   "owner_package_acceptance": "NOT CONFIRMED",
-  "gumroad_publication": "NOT VERIFIED",
+  "gumroad_publication": "NOT APPLICABLE — owner explicitly excluded Gumroad",
   "demo": "NOT IMPLEMENTED",
   "source": {
     "repository": "challanger2000/125A-Chopperator-Final",
@@ -49,5 +49,8 @@
     "manual_visual_review": "NOT RUN",
     "studio_pro_acceptance": "NOT INDEPENDENTLY VERIFIED",
     "clean_machine": "NOT RUN"
-  }
+  },
+  "distribution_model": "FREEWARE",
+  "publication_channel": "NOT SPECIFIED",
+  "owner_freeware_confirmation": "2026-11-25"
 }

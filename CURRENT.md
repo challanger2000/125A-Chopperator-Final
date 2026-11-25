@@ -1,6 +1,6 @@
 # 125A Chopperator V1.0 — authoritative current baseline
 
-**Windows x64 VST3 FULL. Technical/package gates PASS.** Owner designated V1.0 on 2026-11-25. Exact customer-package acceptance and Gumroad publication remain unconfirmed; no independently verified DAW or clean-machine approval is claimed.
+**Windows x64 VST3 freeware, unrestricted FULL edition. Technical/package gates PASS.** Owner designated V1.0 and explicitly confirmed freeware on 2026-11-25. No Gumroad distribution planned; publication channel not specified. Exact package acceptance and independent DAW/clean-machine evidence remain unconfirmed.
 
 ## Source and QA
 
@@ -11,7 +11,7 @@
 - [Windows and portable CI 45625738732](https://github.com/challanger2000/125A-Chopperator-Final/actions/runs/45625738732): SUCCESS. CTest 5/5; validator 47/47; released Tester 57/0/0; native editor, Test Lab and archive checks PASS. Raw Windows logs inspected.
 - CMake version 1.0.0; exposed VST3 version 1.0. No Demo baseline.
 
-## Customer package
+## Freeware distribution package
 
 - [`125A-Chopperator-V1.0-Windows-x64.zip`](https://github.com/challanger2000/125A-Chopperator-Final/actions/runs/45625738732/artifacts/15026734717) — inner ZIP inside GitHub's outer artifact.
 - Inner ZIP SHA-256: `b1d5072c850ddeed174ece4952748bb41b1286f47de5dc8fdb6abdfe56fff3a5`.
@@ -24,4 +24,4 @@ Machine-readable provenance: [release-manifest.json](release-manifest.json). His
 
 ## Remaining acceptance
 
-Studio Pro practical acceptance details, physical ASIO and clean-machine acceptance are not independently verified. Owner package approval and Gumroad upload not confirmed. Do not infer publication or full practical QA from technical success. No new build needed for documentation changes.
+Studio Pro practical acceptance details, physical ASIO and clean-machine acceptance are not independently verified. Owner package approval not explicitly confirmed. Gumroad upload is NOT APPLICABLE; this is freeware. Do not infer publication or full practical QA from technical success. No new build needed for documentation changes.

@@ -1,6 +1,6 @@
-# Current version: V1.0
+# Current version: V1.0 — Freeware
 
-See [CURRENT.md](CURRENT.md) and [release-manifest.json](release-manifest.json) for the authoritative current V1.0 baseline and status. Everything below is a historical record, not current release guidance.
+See [CURRENT.md](CURRENT.md) and [release-manifest.json](release-manifest.json) for the authoritative current V1.0 baseline and status. Owner clarification 2026-11-25: freeware, no Gumroad distribution. This supersedes earlier commercial/Gumroad assumptions. Everything below is a historical record, not current release guidance.
 
 ---
 

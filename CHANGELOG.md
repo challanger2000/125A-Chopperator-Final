@@ -1,3 +1,6 @@
+# V1.0 — distribution clarification (2026-11-25)
+- Owner confirms freeware, not Gumroad. Documentation only; unchanged binary and ZIP.
+
 # V1.0 — first FULL distribution candidate (2026-11-25)
 - Transfer audited P009 baseline to Final repository; exposed VST3 version 1.0.
 - Preserve DSP, GUI, parameters, states and tests.
