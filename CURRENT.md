@@ -1,6 +1,6 @@
 # 125A Chopperator V1.0 — authoritative current baseline
 
-**Windows x64 VST3 freeware, unrestricted FULL edition. Technical/package gates PASS.** Owner designated V1.0 and explicitly confirmed freeware on 2026-11-25. No Gumroad distribution planned; publication channel not specified. Exact package acceptance and independent DAW/clean-machine evidence remain unconfirmed.
+**Windows x64 VST3 freeware, unrestricted FULL edition. Technical/package gates PASS.** Owner designated V1.0 and explicitly confirmed freeware on 2026-11-25. No Gumroad distribution planned; publication channel not specified. Owner confirmed the rest is okay on 2026-11-25; detailed independent DAW/clean-machine evidence remains unconfirmed.
 
 ## Source and QA
 
@@ -24,4 +24,4 @@ Machine-readable provenance: [release-manifest.json](release-manifest.json). His
 
 ## Remaining acceptance
 
-Studio Pro practical acceptance details, physical ASIO and clean-machine acceptance are not independently verified. Owner package approval not explicitly confirmed. Gumroad upload is NOT APPLICABLE; this is freeware. Do not infer publication or full practical QA from technical success. No new build needed for documentation changes.
+Studio Pro practical acceptance details, physical ASIO and clean-machine acceptance are not independently verified. Owner's general acceptance recorded ("ansonsten alles okay"); no specific DAW test protocol or independent verification of delivered ZIP bytes supplied. Gumroad upload is NOT APPLICABLE; this is freeware. Do not infer publication or full practical QA from technical success. No new build needed for documentation changes.

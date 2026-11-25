@@ -7,7 +7,7 @@
   "variant": "FULL",
   "status": "TECHNICAL_PACKAGE_PASS",
   "owner_designated_version": true,
-  "owner_package_acceptance": "NOT CONFIRMED",
+  "owner_package_acceptance": "GENERAL OWNER ACCEPTANCE (2026-11-25); detailed test protocol and delivered ZIP bytes not independently verified",
   "gumroad_publication": "NOT APPLICABLE — owner explicitly excluded Gumroad",
   "demo": "NOT IMPLEMENTED",
   "source": {
