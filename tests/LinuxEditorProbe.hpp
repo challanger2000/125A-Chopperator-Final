@@ -106,6 +106,12 @@ void embedChild(Display* d,Window parent){
 }
 void linuxEditorProbe(const VST3::Hosting::Module::Ptr& module,const std::filesystem::path& folder,bool negative){
     auto* d=XOpenDisplay(nullptr);require(d,"X11 display");
+    // Bare Xvfb has no desktop host to establish these protocol atoms.
+    // XInternAtom(False) creates them if absent; a subsequent lookup is
+    // still required by embedChild, including the child's actual property.
+    require(XInternAtom(d,"_XEMBED_INFO",False)!=None&&
+        XInternAtom(d,"_XEMBED",False)!=None,"initialize XEmbed protocol atoms");
+    XSync(d,False);
     Native n(module);auto handler=owned(new LinuxHandler);n.start(48000,kSample64,2);
     handler->relay=&n;require(n.controller->setComponentHandler(handler.get())==kResultOk,"Linux host handler");
     const auto baseline=n.save();
