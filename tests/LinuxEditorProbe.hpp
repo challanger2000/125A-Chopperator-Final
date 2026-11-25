@@ -80,6 +80,30 @@ unsigned int childCount(Display* d,Window w){
     require(XQueryTree(d,w,&root,&parent,&children,&count)!=0,"X11 child query");
     if(children)XFree(children);return count;
 }
+// XEmbed host responsibility: VSTGUI creates an *unmapped* child. The
+// host must read _XEMBED_INFO, notify the child and map it, as in the
+// pinned SDK editorhost Linux window.cpp CreateNotify handler.
+void embedChild(Display* d,Window parent){
+    Window root{},p{},*children=nullptr;unsigned int count=0;
+    require(XQueryTree(d,parent,&root,&p,&children,&count)!=0&&count==1,"exact XEmbed child");
+    const Window child=children[0];XFree(children);
+    const Atom info=XInternAtom(d,"_XEMBED_INFO",True),embed=XInternAtom(d,"_XEMBED",True);
+    require(info!=None&&embed!=None,"XEmbed atoms");
+    Atom type{};int format=0;unsigned long items=0,remaining=0;unsigned char* data=nullptr;
+    require(XGetWindowProperty(d,child,info,0,2,False,info,&type,&format,&items,&remaining,&data)==Success&&
+        type==info&&format==32&&items==2&&data,"XEmbed info property");
+    const auto version=reinterpret_cast<unsigned long*>(data)[0];XFree(data);
+    auto send=[&](long opcode,long detail,long value1,long value2){
+        XEvent e{};e.xclient.type=ClientMessage;e.xclient.window=child;e.xclient.message_type=embed;e.xclient.format=32;
+        e.xclient.data.l[0]=CurrentTime;e.xclient.data.l[1]=opcode;e.xclient.data.l[2]=detail;
+        e.xclient.data.l[3]=value1;e.xclient.data.l[4]=value2;
+        require(XSendEvent(d,child,False,NoEventMask,&e)!=0,"XEmbed notify");XSync(d,False);
+    };
+    send(0,0,parent,version);XMapWindow(d,child);XResizeWindow(d,child,960,576);XSync(d,False);
+    send(1,0,0,0);send(4,0,0,0);
+    XWindowAttributes a{};require(XGetWindowAttributes(d,child,&a)!=0&&a.map_state==IsViewable,"XEmbed child mapped");
+    std::cerr<<"LINUX_XEMBED_MAPPED child="<<child<<"\n";
+}
 void linuxEditorProbe(const VST3::Hosting::Module::Ptr& module,const std::filesystem::path& folder,bool negative){
     auto* d=XOpenDisplay(nullptr);require(d,"X11 display");
     Native n(module);auto handler=owned(new LinuxHandler);n.start(48000,kSample64,2);
@@ -104,7 +128,7 @@ void linuxEditorProbe(const VST3::Hosting::Module::Ptr& module,const std::filesy
         std::cerr<<"LINUX_ATTACH_RETURN result="<<result<<"\n";
         if(negative){require(result!=kResultOk&&childCount(d,w)==0,"corrupt Linux resource rejects native attach");}
         else{
-            require(result==kResultOk,"Linux X11 attach");frame->pump(120);require(childCount(d,w)>0,"native child window");
+            require(result==kResultOk,"Linux X11 attach");embedChild(d,w);frame->pump(300);require(childCount(d,w)>0,"native child window");
             if(cycle==0){
                 ViewRect r{};require(view->getSize(&r)==kResultOk&&r.getWidth()==960&&r.getHeight()==576,"initial geometry");
                 XSync(d,False);
@@ -118,7 +142,7 @@ void linuxEditorProbe(const VST3::Hosting::Module::Ptr& module,const std::filesy
                     ppm.write(reinterpret_cast<char*>(rgb),3);
                     if(y>80&&y<165&&x>24&&x<936&&rgb[0]>190&&rgb[1]>95&&rgb[1]<195&&rgb[2]<110)++orange;
                 }
-                XDestroyImage(image);ppm.close();require(ppm.good()&&orange>500,"nonblank orange timing display");
+                XDestroyImage(image);ppm.close();std::cerr<<"LINUX_DISPLAY_ORANGE_PIXELS "<<orange<<"\n";require(ppm.good()&&orange>500,"nonblank orange timing display");
                 auto click=[&](int x,int y){Window child{};int rx=0,ry=0;XTranslateCoordinates(d,w,DefaultRootWindow(d),x,y,&rx,&ry,&child);
                     XTestFakeMotionEvent(d,DefaultScreen(d),rx,ry,CurrentTime);XTestFakeButtonEvent(d,1,True,CurrentTime);XSync(d,False);frame->pump(50);
                     XTestFakeButtonEvent(d,1,False,CurrentTime);XSync(d,False);frame->pump(80);};
