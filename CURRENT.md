@@ -1,20 +1,27 @@
-# V1.0 — built and verified distribution candidate
+# 125A Chopperator V1.0 — authoritative current baseline
 
-Exact Final source: 253dbea2ec140e2fc8d7994242afb36e89f42f00. Windows/portable workflow [45625738732](https://github.com/challanger2000/125A-Chopperator-Final/actions/runs/45625738732) SUCCESS; Windows job 139245453990. CTest 5/5, validator 47/47, released Tester 57 PASS / 0 WARNING / 0 FAIL, extracted candidate gate PASS. Native GUI capture 960x576. The customer ZIP gate confirmed 19 files (17 bundle files including notices, plus two five-page DE/EN manuals). PDF text/geometry and raster generation passed in CI; independent visual review NOT RUN. Raw job logs inspected; artifact bytes not independently downloaded.
+**Windows x64 VST3 FULL. Technical/package gates PASS.** Owner designated V1.0 on 2026-11-25. Exact customer-package acceptance and Gumroad publication remain unconfirmed; no independently verified DAW or clean-machine approval is claimed.
 
-Customer ZIP: `125A-Chopperator-V1.0-Windows-x64.zip`
-- [Download GitHub artifact 15026734717](https://github.com/challanger2000/125A-Chopperator-Final/actions/runs/45625738732/artifacts/15026734717)
-- Inner customer ZIP SHA-256: `b1d5072c850ddeed174ece4952748bb41b1286f47de5dc8fdb6abdfe56fff3a5`
-- Outer GitHub artifact SHA-256: `45b16f7b62bca804fc92c42d44e56f17fba6a9a218ff2955b24d459897f1a000`
-- Module SHA-256 from tester log: `788264be75f8eaae491b1473a5321983f7acccf53c249f12263fd7889a805922`
+## Source and QA
 
-Owner designated version V1.0; exact package acceptance and Gumroad publication not yet confirmed. Studio Pro acceptance details and clean-machine evidence not independently verified. No new build initiated by this documentation update.
+- Authoritative repository: `challanger2000/125A-Chopperator-Final`, stable reference `main`. For further development, use an intentional version branch.
+- Exact V1.0 build source: `253dbea2ec140e2fc8d7994242afb36e89f42f00`.
+- Original technical GO: [Codex audit](docs/P009-M01-M03-FOLLOWUP-CODEX-AUDIT.md), audited development source `8859e8be9a3aa12a9f5439780d369e273a820e79`.
+- Complete original snapshot: `e3e60a584a649e0f32645a495c474943a62a6eb8` in [development repository](https://github.com/challanger2000/125A-Chopperator). All 112 original blobs and modes matched before version/package/documentation-only edits. DSP, parameter IDs, state, GUI and original tests were preserved. Historical reproduction scripts referring to original SHAs belong to the original Git checkout.
+- [Windows and portable CI 45625738732](https://github.com/challanger2000/125A-Chopperator-Final/actions/runs/45625738732): SUCCESS. CTest 5/5; validator 47/47; released Tester 57/0/0; native editor, Test Lab and archive checks PASS. Raw Windows logs inspected.
+- CMake version 1.0.0; exposed VST3 version 1.0. No Demo baseline.
 
+## Customer package
 
----
+- [`125A-Chopperator-V1.0-Windows-x64.zip`](https://github.com/challanger2000/125A-Chopperator-Final/actions/runs/45625738732/artifacts/15026734717) — inner ZIP inside GitHub's outer artifact.
+- Inner ZIP SHA-256: `b1d5072c850ddeed174ece4952748bb41b1286f47de5dc8fdb6abdfe56fff3a5`.
+- Outer artifact SHA-256: `45b16f7b62bca804fc92c42d44e56f17fba6a9a218ff2955b24d459897f1a000`.
+- VST3 module SHA-256: `788264be75f8eaae491b1473a5321983f7acccf53c249f12263fd7889a805922`.
+- 19 entries: complete 17-file VST3 bundle including notices, DE and EN PDF manuals (5 pages each).
+- PDF automated text/geometry/render checks PASS. Separate visual inspection NOT RUN. Artifact bytes were not independently downloaded; hashes are from CI and GitHub metadata.
 
-# 125A Chopperator V1.0 — first FULL distribution candidate
+Machine-readable provenance: [release-manifest.json](release-manifest.json). Historical development evidence: [AKTUELLE-VERSION.md](AKTUELLE-VERSION.md). Do not select older P009 artifacts in place of the V1.0 package.
 
-Owner designated V1.0 on 2026-11-25 and authorized transfer into this Final repository. Exact audited development product source: `8859e8be9a3aa12a9f5439780d369e273a820e79`; source snapshot with complete audit history files: `e3e60a584a649e0f32645a495c474943a62a6eb8` from [125A-Chopperator](https://github.com/challanger2000/125A-Chopperator). All 112 original file blobs and modes were compared and identical before release-only changes. Original commit graph is retained in the development repository; historical reproduction scripts referring to its SHAs must be run in that original checkout. No changes to DSP, parameter IDs, state format, native GUI or original test assertions. CMake build version 1.0.0; exposed VST3 factory version 1.0. Only metadata, distribution workflow, PDF generation and release documentation changed.
+## Remaining acceptance
 
-Technical GO: [independent audit](docs/P009-M01-M03-FOLLOWUP-CODEX-AUDIT.md) and [verified P009 source evidence](docs/P009-M01-M03-FOLLOWUP-VERIFICATION.md). The new V1.0 build and package must pass the existing portable/Windows tests and exact archive checks before use. Intended customer filename: `125A-Chopperator-V1.0-Windows-x64.zip` (VST3 plus separate DE and EN five-page manuals; SDK notices inside VST3). No Gumroad publication or clean-machine test independently verified. Owner's practical DAW test details have not been supplied; no independently verified Studio Pro PASS claimed. Package SHA-256 and actual release artifact pending successful CI, manual visual review and owner package acceptance. Demo: not implemented.
+Studio Pro practical acceptance details, physical ASIO and clean-machine acceptance are not independently verified. Owner package approval and Gumroad upload not confirmed. Do not infer publication or full practical QA from technical success. No new build needed for documentation changes.

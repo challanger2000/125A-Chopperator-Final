@@ -1,3 +1,9 @@
+# Current version: V1.0
+
+See [CURRENT.md](CURRENT.md) and [release-manifest.json](release-manifest.json) for the authoritative current V1.0 baseline and status. Everything below is a historical record, not current release guidance.
+
+---
+
 # V1.0 — built and verified distribution candidate
 
 Exact Final source: 253dbea2ec140e2fc8d7994242afb36e89f42f00. Windows/portable workflow [45625738732](https://github.com/challanger2000/125A-Chopperator-Final/actions/runs/45625738732) SUCCESS; Windows job 139245453990. CTest 5/5, validator 47/47, released Tester 57 PASS / 0 WARNING / 0 FAIL, extracted candidate gate PASS. Native GUI capture 960x576. The customer ZIP gate confirmed 19 files (17 bundle files including notices, plus two five-page DE/EN manuals). PDF text/geometry and raster generation passed in CI; independent visual review NOT RUN. Raw job logs inspected; artifact bytes not independently downloaded.

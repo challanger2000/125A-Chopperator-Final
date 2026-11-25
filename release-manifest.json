@@ -1,0 +1,53 @@
+{
+  "product": "125A Chopperator",
+  "version": "1.0",
+  "build_version": "1.0.0",
+  "format": "VST3",
+  "platform": "Windows x64",
+  "variant": "FULL",
+  "status": "TECHNICAL_PACKAGE_PASS",
+  "owner_designated_version": true,
+  "owner_package_acceptance": "NOT CONFIRMED",
+  "gumroad_publication": "NOT VERIFIED",
+  "demo": "NOT IMPLEMENTED",
+  "source": {
+    "repository": "challanger2000/125A-Chopperator-Final",
+    "branch": "main",
+    "commit": "253dbea2ec140e2fc8d7994242afb36e89f42f00",
+    "audited_development_source": "8859e8be9a3aa12a9f5439780d369e273a820e79",
+    "development_snapshot": "e3e60a584a649e0f32645a495c474943a62a6eb8",
+    "independent_audit": "e5489a818e782040207e6a54d436c282ef4debe7"
+  },
+  "build": {
+    "run": 45625738732,
+    "windows_job": 139245453990,
+    "conclusion": "success",
+    "ctest": "5/5",
+    "validator": "47/47",
+    "tester": "57 PASS / 0 WARNING / 0 FAIL",
+    "native_editor": "PASS",
+    "test_lab": "PASS",
+    "archive": "PASS"
+  },
+  "package": {
+    "filename": "125A-Chopperator-V1.0-Windows-x64.zip",
+    "artifact_id": 15026734717,
+    "download_url": "https://github.com/challanger2000/125A-Chopperator-Final/actions/runs/45625738732/artifacts/15026734717",
+    "sha256": "b1d5072c850ddeed174ece4952748bb41b1286f47de5dc8fdb6abdfe56fff3a5",
+    "outer_artifact_sha256": "45b16f7b62bca804fc92c42d44e56f17fba6a9a218ff2955b24d459897f1a000",
+    "module_sha256": "788264be75f8eaae491b1473a5321983f7acccf53c249f12263fd7889a805922",
+    "files": 19,
+    "manuals": [
+      "DE PDF (5 pages)",
+      "EN PDF (5 pages)"
+    ],
+    "notices": "bundled SDK/VSTGUI notices"
+  },
+  "evidence_limits": {
+    "raw_ci_logs": "INSPECTED",
+    "independent_artifact_download": "NOT RUN",
+    "manual_visual_review": "NOT RUN",
+    "studio_pro_acceptance": "NOT INDEPENDENTLY VERIFIED",
+    "clean_machine": "NOT RUN"
+  }
+}
