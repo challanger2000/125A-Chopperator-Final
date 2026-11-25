@@ -1,0 +1,92 @@
+name: Chopperator Linux x64 VST3
+on:
+  push:
+    branches: [platform/linux-x64]
+    paths: ['src/**','tests/**','CMakeLists.txt','tools/**','resources/**','.github/workflows/linux.yml']
+  workflow_dispatch:
+jobs:
+  linux:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Linux X11 SDK dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build libx11-dev libx11-xcb-dev libxcb-util-dev libxcb-cursor-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libfontconfig1-dev libcairo2-dev libgtkmm-3.0-dev libsqlite3-dev libxcb-keysyms1-dev libxtst-dev libxcb-render-util0-dev libxcb-image0-dev libxcb-icccm4-dev libxcb-xinerama0-dev libxcb-randr0-dev libfreetype-dev libexpat1-dev libpng-dev libjpeg-dev xvfb xauth ffmpeg
+          python -m pip install --only-binary=:all: pillow==11.3.0 reportlab==4.4.9 pymupdf==1.26.7
+      - name: Prepare exact GUI resources
+        run: python tools/prepare_native_gui.py gui-draft
+      - name: Configure and build
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCHOPPER_BUILD_VST3=ON -DSMTG_ENABLE_WAYLAND_SUPPORT=OFF
+          cmake --build build --parallel 4 --target chopper_core_tests chopper_extended_tests chopper_host_tests chopper_registry_tests chopper_native_tests chopper_gui_resources validator
+      - name: Portable tests
+        run: ctest --test-dir build --output-on-failure
+      - name: Verify native ELF bundle, validator and host PCM
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          mapfile -t bundles < <(find build -type d -name '125A Chopperator.vst3')
+          test "${#bundles[@]}" = 1
+          plugin="$(realpath "${bundles[0]}")"
+          module="$plugin/Contents/x86_64-linux/125A Chopperator.so"
+          test -f "$module"
+          file "$module" | tee evidence/elf.txt
+          grep -q 'ELF 64-bit.*x86-64' evidence/elf.txt
+          ldd "$module" | tee evidence/ldd.txt
+          ! grep -q 'not found' evidence/ldd.txt
+          mapfile -t validators < <(find build -type f -name validator -executable)
+          test "${#validators[@]}" = 1
+          validator="$(realpath "${validators[0]}")"
+          native="$(realpath build/chopper_native_tests)"
+          printf '%s\n' "PLUGIN=$plugin" "VALIDATOR=$validator" "NATIVE=$native" >> "$GITHUB_ENV"
+          "$validator" "$plugin" | tee evidence/validator.txt
+          "$native" "$plugin" | tee evidence/native-pcm.txt
+          set +e
+          "$native" "$plugin" --negative-spectrum > evidence/negative-spectrum.txt 2>&1
+          rc=$?
+          set -e
+          test "$rc" = 1
+          grep -q 'FAIL SINE carrier oracle' evidence/negative-spectrum.txt
+      - name: Actual X11 editor and negative resource tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          xvfb-run -a -s '-screen 0 1920x1080x24' "$NATIVE" "$PLUGIN" --editor evidence | tee evidence/linux-editor.txt
+          for asset in logo_3x.png knob_L_1.5x.png logo.png knob_S_0.75x.png; do
+            work="$(mktemp -d)"
+            cp -a "$PLUGIN" "$work/"
+            target="$work/125A Chopperator.vst3/Contents/Resources/$asset"
+            test -s "$target"
+            printf 'invalid image' > "$target"
+            xvfb-run -a "$NATIVE" "$work/125A Chopperator.vst3" --resource-negative evidence
+            rm -rf "$work"
+          done
+      - name: Real programme fixture and PCM
+        run: |
+          python tools/prepare_programme_fixtures.py fixtures
+          "$NATIVE" "$PLUGIN" --programme "$(realpath fixtures)" | tee evidence/programme.txt
+          cp fixtures/manifest.json evidence/
+      - name: Package Linux VST3 and bilingual manuals; verify fresh extraction
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p distribution customer
+          python tools/package_linux_candidate.py "$PLUGIN" distribution/candidate.zip
+          python tools/build_release_package_linux.py --candidate distribution/candidate.zip --screenshot evidence/native-editor.ppm --out customer --evidence evidence
+          unzip -q customer/*.zip -d fresh
+          "$VALIDATOR" "$(realpath 'fresh/125A Chopperator.vst3')" | tee evidence/extracted-validator.txt
+          xvfb-run -a -s '-screen 0 1920x1080x24' "$NATIVE" "$(realpath 'fresh/125A Chopperator.vst3')" --editor extracted-evidence
+          sha256sum customer/*.zip | tee evidence/package-sha256.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: 125A-Chopperator-V1.0-Linux-x64
+          path: customer/*.zip
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Chopperator-Linux-QA-evidence
+          path: evidence/

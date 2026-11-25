@@ -23,10 +23,10 @@ add_test(NAME editor_registry_reentrancy COMMAND chopper_registry_tests)
 add_test(NAME release_negative_control COMMAND chopper_core_tests --negative)
 set_tests_properties(release_negative_control PROPERTIES WILL_FAIL TRUE)
 
-option(CHOPPER_BUILD_VST3 "Build Windows VST3 adapter" OFF)
+option(CHOPPER_BUILD_VST3 "Build native VST3 adapter" OFF)
 if(CHOPPER_BUILD_VST3)
-  if(NOT WIN32)
-    message(FATAL_ERROR "125A Chopperator ships Windows x64 VST3 only")
+  if(NOT WIN32 AND NOT (CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|amd64)$"))
+    message(FATAL_ERROR "Supported targets: Windows and Linux x86-64")
   endif()
   set(SMTG_ENABLE_VST3_PLUGIN_EXAMPLES OFF CACHE BOOL "" FORCE)
   set(SMTG_ENABLE_VST3_HOSTING_EXAMPLES ON CACHE BOOL "" FORCE)
@@ -70,12 +70,25 @@ if(CHOPPER_BUILD_VST3)
     COMMAND ${CMAKE_COMMAND} -E copy_if_different "${vst3sdk_SOURCE_DIR}/vstgui4/LICENSE" "$<TARGET_FILE_DIR:Chopperator>/../Resources/VSTGUI-LICENSE.txt"
     DEPENDS Chopperator ${CHOPPER_GUI_FILES} ${CHOPPER_NOTICE_FILES}
     VERBATIM)
-  target_sources(Chopperator PRIVATE ${vst3sdk_SOURCE_DIR}/public.sdk/source/main/dllmain.cpp)
   smtg_target_configure_version_file(Chopperator)
+  if(WIN32)
+    target_sources(Chopperator PRIVATE ${vst3sdk_SOURCE_DIR}/public.sdk/source/main/dllmain.cpp)
+    set(chopper_host_platform ${vst3sdk_SOURCE_DIR}/public.sdk/source/vst/hosting/module_win32.cpp)
+    set(chopper_host_libs user32 ole32 gdi32)
+  else()
+    # smtg_add_vst3plugin may add linuxmain automatically when SDK scope is visible.
+    get_target_property(chopper_sources Chopperator SOURCES)
+    if(NOT "${chopper_sources}" MATCHES "linuxmain\\.cpp")
+      target_sources(Chopperator PRIVATE ${vst3sdk_SOURCE_DIR}/public.sdk/source/main/linuxmain.cpp)
+    endif()
+    find_package(X11 REQUIRED)
+    set(chopper_host_platform ${vst3sdk_SOURCE_DIR}/public.sdk/source/vst/hosting/module_linux.cpp)
+    set(chopper_host_libs X11::X11 X11::Xtst ${CMAKE_DL_LIBS})
+  endif()
   add_executable(chopper_native_tests tests/NativeVst3Tests.cpp
-    ${vst3sdk_SOURCE_DIR}/public.sdk/source/vst/hosting/module_win32.cpp
+    ${chopper_host_platform}
     ${vst3sdk_SOURCE_DIR}/public.sdk/source/vst/hosting/plugprovider.cpp
     ${vst3sdk_SOURCE_DIR}/public.sdk/source/common/memorystream.cpp)
   target_compile_features(chopper_native_tests PRIVATE cxx_std_17)
-  target_link_libraries(chopper_native_tests PRIVATE sdk_hosting user32 ole32 gdi32)
+  target_link_libraries(chopper_native_tests PRIVATE sdk_hosting ${chopper_host_libs} Threads::Threads)
 endif()

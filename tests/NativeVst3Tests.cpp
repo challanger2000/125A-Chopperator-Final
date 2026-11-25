@@ -13,9 +13,16 @@
 #include "pluginterfaces/vst/ivstplugview.h"
 #include "pluginterfaces/gui/iplugview.h"
 #include "pluginterfaces/gui/iplugviewcontentscalesupport.h"
+#ifdef _WIN32
 #define NOMINMAX
 #include <windows.h>
 #include <objbase.h>
+#else
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/extensions/XTest.h>
+#include <poll.h>
+#endif
 #include <cstdint>
 #include <algorithm>
 #include <array>
@@ -387,6 +394,7 @@ void programme(const VST3::Hosting::Module::Ptr& module,const std::filesystem::p
 }
 
 
+#ifdef _WIN32
 void pumpGui(int ms){
     auto end=std::chrono::steady_clock::now()+std::chrono::milliseconds(ms);
     do{MSG m{};while(PeekMessageW(&m,nullptr,0,0,PM_REMOVE)){TranslateMessage(&m);DispatchMessageW(&m);}
@@ -1301,6 +1309,7 @@ void liveUIAudit(const VST3::Hosting::Module::Ptr& module){
     std::cout<<"NATIVE_P009_LIVE_RECALL_PEER_DPI_DIRTY_PASS\n";
 }
 
+#endif
 // P009 native counterexamples: use actual loaded processor/controller.
 class FaultStream final:public MemoryStream {
 public:
@@ -1421,6 +1430,7 @@ void clockLifecycleAndQueue(const VST3::Hosting::Module::Ptr& module){
     std::cout<<"NATIVE_P009_CLOCK_LIFECYCLE_MALFORMED_QUEUE_PASS\n";
 }
 
+#ifdef _WIN32
 // Actual module attaches to a native HWND, then detaches repeatedly.
 // A separate process with a deliberately damaged resource must reject
 // attach; no alteration of the staged release candidate.
@@ -1458,20 +1468,35 @@ void resourceAndLifecycle(const VST3::Hosting::Module::Ptr& module,bool expectFa
     std::cout<<(expectFailure?"NATIVE_P009_CORRUPT_RESOURCE_REJECT_PASS":"NATIVE_P009_LIFECYCLE_20_PASS")<<"\n";
 }
 
+#else
+#include "LinuxEditorProbe.hpp"
+#endif
+
 int main(int argc,char** argv){
     require(argc==2||argc==3||argc==4,"bundle argument");
+#ifdef _WIN32
     struct ComScope{HRESULT hr=CoInitializeEx(nullptr,COINIT_APARTMENTTHREADED);~ComScope(){if(SUCCEEDED(hr))CoUninitialize();}} com;
     require(SUCCEEDED(com.hr),"COM apartment");
+#endif
     std::string error;auto module=VST3::Hosting::Module::create(argv[1],error);
     if(!module){std::cerr<<error<<'\n';return 1;}
     HostApplication host;PluginContextFactory::instance().setPluginContext(&host);
     module->getFactory().setHostContext(&host);
+    #ifdef _WIN32
     if(argc==4){if(std::string(argv[2])=="--editor"||std::string(argv[2])=="--preview"){guiContract(module,argv[3],std::string(argv[2])=="--preview");if(std::string(argv[2])=="--editor")liveUIAudit(module);return 0;}require(std::string(argv[2])=="--programme","programme argument");programme(module,argv[3]);return 0;}
     if(argc==3){
         const std::string mode=argv[2];
         if(mode=="--resource-positive"||mode=="--resource-negative"){resourceAndLifecycle(module,mode=="--resource-negative");return 0;}
         require(mode=="--negative-spectrum","negative control argument");spectral(module,true);return 2;
     }
+    #else
+    if(argc==4){
+        const std::string mode=argv[2];
+        if(mode=="--editor"||mode=="--resource-negative"){linuxEditorProbe(module,argv[3],mode=="--resource-negative");return 0;}
+        require(mode=="--programme","programme argument");programme(module,argv[3]);return 0;
+    }
+    if(argc==3){require(std::string(argv[2])=="--negative-spectrum","negative control argument");spectral(module,true);return 2;}
+    #endif
     auditRegressions(module);clockLifecycleAndQueue(module);
     waveformContracts(module);spectral(module,false);realtimeProbe(module);
     timing<float>(module,48000,2);timing<double>(module,48000,1);
