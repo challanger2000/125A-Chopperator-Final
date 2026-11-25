@@ -97,7 +97,8 @@ void linuxEditorProbe(const VST3::Hosting::Module::Ptr& module,const std::filesy
             if(cycle==0){
                 ViewRect r{};require(view->getSize(&r)==kResultOk&&r.getWidth()==960&&r.getHeight()==576,"initial geometry");
                 XSync(d,False);
-                XImage* image=XGetImage(d,w,0,0,960,576,AllPlanes,ZPixmap);require(image,"actual native X11 screenshot");
+                Window child{};int rootX=0,rootY=0;require(XTranslateCoordinates(d,w,DefaultRootWindow(d),0,0,&rootX,&rootY,&child)!=0,"screen capture coordinates");
+                XImage* image=XGetImage(d,DefaultRootWindow(d),rootX,rootY,960,576,AllPlanes,ZPixmap);require(image,"actual native X11 screenshot");
                 auto channel=[](unsigned long v,unsigned long mask){if(!mask)return 0u;while(!(mask&1)){mask>>=1;v>>=1;}return static_cast<unsigned int>((v&mask)*255/mask);};
                 std::filesystem::create_directories(folder);
                 std::ofstream ppm(folder/"native-editor.ppm",std::ios::binary);ppm<<"P6\n960 576\n255\n";
@@ -111,7 +112,11 @@ void linuxEditorProbe(const VST3::Hosting::Module::Ptr& module,const std::filesy
                     XTestFakeMotionEvent(d,DefaultScreen(d),rx,ry,CurrentTime);XTestFakeButtonEvent(d,1,True,CurrentTime);XSync(d,False);frame->pump(50);
                     XTestFakeButtonEvent(d,1,False,CurrentTime);XSync(d,False);frame->pump(80);};
                 click(650,34);require(n.controller->getParamNormalized(111)==1&&handler->edits[11]>0,"actual ACTIVE ON click");
-                const auto wet=n.render<double>(512);require(wet.back()<1,"GUI ACTIVE audible PCM");
+                // The default pattern begins open. Wait a full second of actual PCM;
+                // a one-block probe would incorrectly fail the approved default pattern.
+                double minGain=1.,maxGain=0.;
+                for(int i=0;i<100;++i)for(auto v:n.render<double>(512)){minGain=std::min(minGain,v);maxGain=std::max(maxGain,v);}
+                require(minGain<.1&&maxGain>.99,"GUI ACTIVE audible PCM");
                 click(573,34);require(n.controller->getParamNormalized(111)==0,"actual ACTIVE OFF click");
                 click(878,34);require(n.controller->getParamNormalized(112)==1&&handler->edits[12]>0,"actual LOOP click");
                 click(762,34);require(n.controller->getParamNormalized(112)==0,"actual ONE SHOT click");

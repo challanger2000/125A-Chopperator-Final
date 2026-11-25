@@ -4,6 +4,9 @@ on:
     branches: [platform/linux-x64]
     paths: ['src/**','tests/**','CMakeLists.txt','tools/**','resources/**','.github/workflows/linux.yml']
   workflow_dispatch:
+concurrency:
+  group: chopperator-linux-x64
+  cancel-in-progress: true
 jobs:
   linux:
     runs-on: ubuntu-24.04
@@ -42,6 +45,8 @@ jobs:
           validator="$(realpath "${validators[0]}")"
           native="$(realpath build/chopper_native_tests)"
           printf '%s\n' "PLUGIN=$plugin" "VALIDATOR=$validator" "NATIVE=$native" >> "$GITHUB_ENV"
+          cmp "$plugin/Contents/Resources/Steinberg-VST3-LICENSE.txt" build/_deps/vst3sdk-src/LICENSE.txt
+          cmp "$plugin/Contents/Resources/VSTGUI-LICENSE.txt" build/_deps/vst3sdk-src/vstgui4/LICENSE
           "$validator" "$plugin" | tee evidence/validator.txt
           "$native" "$plugin" | tee evidence/native-pcm.txt
           set +e
@@ -65,7 +70,9 @@ jobs:
             rm -rf "$work"
           done
       - name: Real programme fixture and PCM
+        shell: bash
         run: |
+          set -euo pipefail
           python tools/prepare_programme_fixtures.py fixtures
           "$NATIVE" "$PLUGIN" --programme "$(realpath fixtures)" | tee evidence/programme.txt
           cp fixtures/manifest.json evidence/
