@@ -9,6 +9,7 @@ class LinuxFrame final : public FObject, public IPlugFrame, public Steinberg::Li
     Display* display; Window parent;
 public:
     LinuxFrame(Display* d,Window w):display(d),parent(w){}
+    void setParent(Window w){parent=w;}
     tresult PLUGIN_API resizeView(IPlugView* view,ViewRect* r) override{
         if(!view||!r||r->getWidth()<=0||r->getHeight()<=0)return kInvalidArgument;
         XResizeWindow(display,parent,r->getWidth(),r->getHeight());XSync(display,False);
@@ -84,13 +85,23 @@ void linuxEditorProbe(const VST3::Hosting::Module::Ptr& module,const std::filesy
     Native n(module);auto handler=owned(new LinuxHandler);n.start(48000,kSample64,2);
     handler->relay=&n;require(n.controller->setComponentHandler(handler.get())==kResultOk,"Linux host handler");
     const auto baseline=n.save();
+    // One host event loop serves every editor, including after detach/reopen.
+    auto frame=owned(new LinuxFrame(d,0));
     for(int cycle=0;cycle<(negative?1:20);++cycle){
         Window w=XCreateSimpleWindow(d,DefaultRootWindow(d),30,30,960,576,0,0,0);
         XMapRaised(d,w);XSync(d,False);
-        auto frame=owned(new LinuxFrame(d,w));auto view=owned(n.controller->createView(ViewType::kEditor));
-        require(view&&view->setFrame(frame.get())==kResultOk,"Linux editor creation");
+        frame->setParent(w);auto view=owned(n.controller->createView(ViewType::kEditor));
+        require(bool(view),"Linux editor creation");
+        if(cycle==0&&!negative){
+            // Factory context is the ordinary HostApplication without IRunLoop.
+            // No frame must fail safely instead of entering the SDK's null runloop.
+            require(view->attached(reinterpret_cast<void*>(static_cast<uintptr_t>(w)),kPlatformTypeX11EmbedWindowID)!=kResultOk&&childCount(d,w)==0,"missing runloop rejected");
+        }
+        require(view->setFrame(frame.get())==kResultOk,"Linux editor frame");
+        std::cerr<<"LINUX_ATTACH_BEGIN cycle="<<cycle<<"\n";
         require(view->isPlatformTypeSupported(kPlatformTypeX11EmbedWindowID)==kResultOk,"X11 platform");
         auto result=view->attached(reinterpret_cast<void*>(static_cast<uintptr_t>(w)),kPlatformTypeX11EmbedWindowID);
+        std::cerr<<"LINUX_ATTACH_RETURN result="<<result<<"\n";
         if(negative){require(result!=kResultOk&&childCount(d,w)==0,"corrupt Linux resource rejects native attach");}
         else{
             require(result==kResultOk,"Linux X11 attach");frame->pump(120);require(childCount(d,w)>0,"native child window");
@@ -129,6 +140,7 @@ void linuxEditorProbe(const VST3::Hosting::Module::Ptr& module,const std::filesy
                 frame->pump(60);
                 require(n.save()==baseline,"restored GUI controls preserve component state");
             }
+            std::cerr<<"LINUX_DETACH_BEGIN cycle="<<cycle<<"\n";
             require(view->removed()==kResultOk,"Linux editor detach");frame->pump(50);XSync(d,False);
             require(childCount(d,w)==0,"native child destroyed");
         }
@@ -137,6 +149,6 @@ void linuxEditorProbe(const VST3::Hosting::Module::Ptr& module,const std::filesy
         require(n.save()==baseline,"Linux editor lifecycle no state mutation");
     }
     handler->relay=nullptr;require(n.controller->setComponentHandler(nullptr)==kResultOk,"clear Linux host handler");
-    n.stop();XCloseDisplay(d);
+    n.stop();frame->setParent(0);XCloseDisplay(d);
     std::cout<<(negative?"LINUX_RESOURCE_REJECT_PASS":"LINUX_X11_EDITOR_20_CYCLES_SWITCH_PCM_RESIZE_PASS")<<"\n";
 }

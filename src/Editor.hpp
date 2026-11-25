@@ -3,6 +3,10 @@
 #include "EditorPreferences.hpp"
 #include "EditorGeometry.hpp"
 #include "vstgui/plugin-bindings/vst3editor.h"
+#if SMTG_OS_LINUX
+#include "vstgui/lib/platform/linux/linuxfactory.h"
+#include "public.sdk/source/vst/vstgui_linux_runloop_support.h"
+#endif
 #include "vstgui/lib/cdrawcontext.h"
 #include "vstgui/lib/cgradient.h"
 #include "vstgui/lib/cgraphicspath.h"
@@ -351,6 +355,16 @@ public:
         // The pinned SDK's VSTGUIEditor::attached returns EditorView::attached
         // even when virtual open() returns false. Reject failed resource
         // preflight before entering that SDK path; never report a blank editor.
+#if SMTG_OS_LINUX
+        // The pinned VSTGUI X11 Frame calls RunLoop::init before installing
+        // its frame-local runloop. A host may supply IRunLoop on IPlugFrame
+        // instead of the factory context. Initialize before that dereference.
+        auto* factory=VSTGUI::getPlatformFactory().asLinuxFactory();
+        if(!factory)return Steinberg::kResultFalse;
+        if(!factory->getRunLoop() &&
+           (!plugFrame || !Steinberg::Linux::setupVSTGUIRunloop(plugFrame)))
+            return Steinberg::kResultFalse;
+#endif
         if(!resourcesValid())return Steinberg::kResultFalse;
         const auto result=AspectRatioVST3Editor::attached(parent,type);
         if(result==Steinberg::kResultTrue&&!opened){

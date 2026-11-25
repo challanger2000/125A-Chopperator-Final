@@ -16,7 +16,7 @@ jobs:
       - name: Install Linux X11 SDK dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y ninja-build libx11-dev libx11-xcb-dev libxcb-util-dev libxcb-cursor-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libfontconfig1-dev libcairo2-dev libgtkmm-3.0-dev libsqlite3-dev libxcb-keysyms1-dev libxtst-dev libxcb-render-util0-dev libxcb-image0-dev libxcb-icccm4-dev libxcb-xinerama0-dev libxcb-randr0-dev libfreetype-dev libexpat1-dev libpng-dev libjpeg-dev xvfb xauth ffmpeg
+          sudo apt-get install -y ninja-build libx11-dev libx11-xcb-dev libxcb-util-dev libxcb-cursor-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libfontconfig1-dev libcairo2-dev libgtkmm-3.0-dev libsqlite3-dev libxcb-keysyms1-dev libxtst-dev libxcb-render-util0-dev libxcb-image0-dev libxcb-icccm4-dev libxcb-xinerama0-dev libxcb-randr0-dev libfreetype-dev libexpat1-dev libpng-dev libjpeg-dev xvfb xauth ffmpeg gdb
           python -m pip install --only-binary=:all: pillow==11.3.0 reportlab==4.4.9 pymupdf==1.26.7
       - name: Prepare exact GUI resources
         run: python tools/prepare_native_gui.py gui-draft
@@ -59,7 +59,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          xvfb-run -a -s '-screen 0 1920x1080x24' "$NATIVE" "$PLUGIN" --editor evidence | tee evidence/linux-editor.txt
+          set +e
+          xvfb-run -a -s '-screen 0 1920x1080x24' "$NATIVE" "$PLUGIN" --editor evidence 2>&1 | tee evidence/linux-editor.txt
+          rc=${PIPESTATUS[0]}
+          set -e
+          if [ "$rc" = 139 ]; then
+            xvfb-run -a -s '-screen 0 1920x1080x24' gdb -batch -ex run -ex 'thread apply all bt' --args "$NATIVE" "$PLUGIN" --editor evidence 2>&1 | tee evidence/linux-editor-backtrace.txt
+          fi
+          test "$rc" = 0
           for asset in logo_3x.png knob_L_1.5x.png logo.png knob_S_0.75x.png; do
             work="$(mktemp -d)"
             cp -a "$PLUGIN" "$work/"
