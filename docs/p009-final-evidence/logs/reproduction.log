@@ -1,0 +1,59 @@
+clock sample 511 expected 0.25566666666667 positive 0.25566666666667 held 0.1705 mixed 0.25566666666667
+PASS tempo-only positive and 120 BPM counterfactual
+PASS valid tempo survives bad meter
+PASS C09 per-instance clock persists, restarted phase
+C01 meter variant 0 output at sample 18024=1
+PASS C01 meter-only and both flags vs. unchanged counterfactual
+C01 meter variant 1 output at sample 18024=0
+PASS C01 meter-only and both flags vs. unchanged counterfactual
+C01 meter variant 2 output at sample 18024=1
+PASS C01 meter-only and both flags vs. unchanged counterfactual
+PASS C02 valid v1 bytes round trip exactly
+C02 full-count failure reads=16/16 writes=16/16
+PASS C02 stream failures reject without state mutation
+C02 successful short count reads=16/16 writes=16/16
+PASS C02 stream failures reject without state mutation
+C03 format 0 cell count=16/16
+PASS C03 mono/stereo in-place/out-of-place activation matrix
+C03 format 1 cell count=16/16
+PASS C03 mono/stereo in-place/out-of-place activation matrix
+PASS C07 doubled signs denied with rollback
+PASS C07 signed controls accepted
+PASS C08 extreme setup rejected with exact continuing phase and gain
+MIX ramp max error 0
+PASS analytic MIX at 256 vs 4x64
+20 waveform combinations max error=9.9920072216264e-16
+PASS five shape and stereo bounded sample-rate matrix
+PASS 64-bit in-place nonfinite/silence/recovery
+N06 relative squared PCM error=6.0583980696161e-26 constant-gain negative=0.17347031414974 samples=49152
+N06 former energy ratios for constant gain: 0.25 and 0.25
+N03 state bytes=119 accepted=0 notifications=1 observedEpoch=0 observedWidth=0.2
+N03 state bytes=120 accepted=1 notifications=2 observedEpoch=1 observedWidth=0.8
+N01 reproduced: bad_function_call
+N01 current detach: surviving callback invoked once per restore
+N02 75% at 1.28 DPI request=921 oldAccepted=0 currentAccepted=1 currentZoom=0.75
+DPI=1 recall=1.5 request=1440 allowedMax=1440 accepted=1 actualWidth=1440
+DPI=1.28 recall=1.5 request=1843 allowedMax=1843 accepted=1 actualWidth=1843
+DPI=1.37 recall=1.5 request=1973 allowedMax=1972 accepted=0 actualWidth=1315
+PASS active stereo sentinel
+PASS inactive input with null pointers
+inactive input sentinel 0 0 flags=3
+PASS inactive input with nonnull pointers renders silence
+inactive output sentinel 9 9
+PASS inactive output buffer untouched
+recall/save request pairs 20000 audio blocks 1650 wrong=0
+PASS overlapped audio and 20k serialized host recall/saves
+paired clock read median_us=0.02
+48000/32 mean 9.0763098958333 p95 10.856 p99 19.9 max 21.162 deadline 666.666 duration misses 0 schedule misses 0 new 0 mod delta 0.54623080312062
+PASS bounded PCM, C++ new calls and duration below deadline
+48000/128 mean 47.263760416667 p95 76.165 p99 151.188 max 783.561 deadline 2666.666 duration misses 0 schedule misses 0 new 0 mod delta 0.54683643879693
+PASS bounded PCM, C++ new calls and duration below deadline
+48000/512 mean 161.1191875 p95 194.253 p99 875.591 max 1379.521 deadline 10666.666 duration misses 0 schedule misses 0 new 0 mod delta 0.54687483325192
+PASS bounded PCM, C++ new calls and duration below deadline
+192000/32 mean 9.3483411458333 p95 9.144 p99 60.461 max 139.17 deadline 166.666 duration misses 0 schedule misses 23 new 0 mod delta 0.5462359885997
+PASS bounded PCM, C++ new calls and duration below deadline
+192000/128 mean 35.361161458333 p95 45.829 p99 89.285 max 109.035 deadline 666.666 duration misses 0 schedule misses 1 new 0 mod delta 0.54683470913886
+PASS bounded PCM, C++ new calls and duration below deadline
+192000/512 mean 143.25526822917 p95 204.85 p99 331.17 max 648.618 deadline 2666.666 duration misses 0 schedule misses 0 new 0 mod delta 0.54687483325192
+PASS bounded PCM, C++ new calls and duration below deadline
+Stress exit status 0

@@ -1,0 +1,21 @@
+PASS active stereo sentinel
+PASS inactive input with null pointers
+inactive input sentinel 0 0 flags=3
+PASS inactive input with nonnull pointers renders silence
+inactive output sentinel 9 9
+PASS inactive output buffer untouched
+recall/save request pairs 20000 audio blocks 1557 wrong=0
+PASS overlapped audio and 20k serialized host recall/saves
+paired clock read median_us=0.02
+48000/32 mean 9.3536796875 p95 11.207 p99 12.899 max 24.146 deadline 666.666 duration misses 0 schedule misses 0 new 0 mod delta 0.54623080312062
+PASS bounded PCM, C++ new calls and duration below deadline
+48000/128 mean 42.574127604167 p95 63.366 p99 203.006 max 1201.574 deadline 2666.666 duration misses 0 schedule misses 0 new 0 mod delta 0.54683643879693
+PASS bounded PCM, C++ new calls and duration below deadline
+48000/512 mean 177.22714322917 p95 256.637 p99 830.894 max 2060.531 deadline 10666.666 duration misses 0 schedule misses 0 new 0 mod delta 0.54687483325192
+PASS bounded PCM, C++ new calls and duration below deadline
+192000/32 mean 9.1649192708333 p95 9.504 p99 13.731 max 224.478 deadline 166.666 duration misses 1 schedule misses 2 new 0 mod delta 0.5462359885997
+FAIL bounded PCM, C++ new calls and duration below deadline
+192000/128 mean 37.825463541667 p95 35.363 p99 119.079 max 1169.145 deadline 666.666 duration misses 1 schedule misses 2 new 0 mod delta 0.54683470913886
+FAIL bounded PCM, C++ new calls and duration below deadline
+192000/512 mean 177.300375 p95 224.739 p99 536.82 max 12065.753 deadline 2666.666 duration misses 1 schedule misses 5 new 0 mod delta 0.54687483325192
+FAIL bounded PCM, C++ new calls and duration below deadline

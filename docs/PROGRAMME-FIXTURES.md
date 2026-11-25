@@ -1,0 +1,12 @@
+# Programme fixture acquisition
+The three pinned original FLAC samples are from FreePats CC0 libraries. Two electric guitar notes are real DI recordings subsequently amp/effects processed by the source author. E2 and B3 may form a constructed E-fifth interval, but are not a recorded simultaneous power chord. Pad C4 is a rendered ZynAddSubFX/Yoshimi Sweep Pad.
+- Guitar source: https://github.com/freepats/electric-guitar-FSBS-dist2/tree/21261b8bcb02d1cbf52dc02f1b1636df52d4a947
+- Pad source: https://github.com/freepats/sweep-pad/tree/ed3e294fcec8c3ea3ec84471f8c7a75bc09eba04
+Run tools/prepare_programme_fixtures.py with an explicit output directory and ffmpeg on PATH. Download only exact pinned bytes; verify Git blob hashes before decoding. Record source SHA256, decoded PCM SHA256, ffmpeg version and peak. Do not normalize input or ship fixture samples in customer packages.
+Status: acquisition script authored, network and decoding execution NOT RUN. The original local download path was unavailable. These sources and the script do not establish real-audio or listening PASS. Next: execute on authorized CI, pin the resulting manifests, use actual VST3 native audio tests and evaluate musical output separately.
+
+## P006
+Test the actual Windows VST3 on up to four seconds of each verified decoded source, 48 kHz stereo double precision, constant 8 Hz rectangle and sine. Independent steady-state analytic PCM reference outside rectangle slew transitions, finite bounded signed output, meaningful wet RMS reduction and exact settled dry. Preserve generated listening WAVs and manifest separately; no claim of human audition. Test official portable v0.2.10 via --portable-test and inspect actual reports. This is released tester coverage, not the newer development candidate or full Test Lab. P006 execution pending.
+
+## Executed P006 result
+Run 45305616120, commit ac2678b51eb80c4eb6fa716ab8601a9a09aca2d5: all six programme oracles passed. Each 192000 frames. Guitar E2 RECT relative error 0, wet -3.0268 dB; SINE 2.26723e-15, -4.24792 dB. Guitar B3 RECT 0, -3.03156 dB; SINE 2.13157e-15, -4.22532 dB. Pad C4 RECT 0, -2.99816 dB; SINE 2.1118e-15, -4.23586 dB. Independent tester 55 PASS, 0 WARNING, 0 FAIL. All source/PCM identities and six listening WAVs in QA evidence artifact 14880528429. Human listening NOT RUN; actual simultaneous recorded power chord not tested. Overall workflow failure limited to later GUI logo acquisition, not these completed gates.

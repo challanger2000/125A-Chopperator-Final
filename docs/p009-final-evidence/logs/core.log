@@ -1,0 +1,191 @@
+-- The CXX compiler identification is GNU 14.2.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Configuring done (0.2s)
+-- Generating done (0.0s)
+-- Build files have been written to: /workspace/scratch/p009-final-audit/core-check/aade956/stock
+[ 16%] Building CXX object CMakeFiles/chopper_core_tests.dir/tests/CoreTests.cpp.o
+[ 33%] Building CXX object CMakeFiles/chopper_extended_tests.dir/tests/ExtendedTests.cpp.o
+[ 50%] Building CXX object CMakeFiles/chopper_host_tests.dir/tests/HostEngineTests.cpp.o
+[ 66%] Linking CXX executable chopper_extended_tests
+[ 66%] Built target chopper_extended_tests
+[ 83%] Linking CXX executable chopper_host_tests
+[ 83%] Built target chopper_host_tests
+[100%] Linking CXX executable chopper_core_tests
+[100%] Built target chopper_core_tests
+Unmodified GCC build aade95612ccf492819221b16ff896d11d138c907 exit 0
+Internal ctest changing into directory: /workspace/scratch/p009-final-audit/core-check/aade956/stock
+Test project /workspace/scratch/p009-final-audit/core-check/aade956/stock
+    Start 1: core_contract
+1/4 Test #1: core_contract ....................   Passed    0.10 sec
+    Start 2: extended_contract
+2/4 Test #2: extended_contract ................   Passed    0.34 sec
+    Start 3: host_engine_contract
+3/4 Test #3: host_engine_contract .............   Passed    0.03 sec
+    Start 4: release_negative_control
+4/4 Test #4: release_negative_control .........   Passed    0.00 sec
+
+100% tests passed, 0 tests failed out of 4
+
+Total Test time (real) =   0.48 sec
+-- The CXX compiler identification is GNU 14.2.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Configuring done (0.2s)
+-- Generating done (0.0s)
+-- Build files have been written to: /workspace/scratch/p009-final-audit/core-check/3bea058/stock
+[ 12%] Building CXX object CMakeFiles/chopper_extended_tests.dir/tests/ExtendedTests.cpp.o
+[ 25%] Building CXX object CMakeFiles/chopper_core_tests.dir/tests/CoreTests.cpp.o
+[ 37%] Building CXX object CMakeFiles/chopper_registry_tests.dir/tests/EditorPreferencesTests.cpp.o
+[ 50%] Building CXX object CMakeFiles/chopper_host_tests.dir/tests/HostEngineTests.cpp.o
+In file included from /workspace/scratch/p009-final-audit/core-check/3bea058/tests/EditorPreferencesTests.cpp:1:
+/workspace/scratch/p009-final-audit/core-check/3bea058/src/EditorPreferences.hpp: In member function ‘void chopper::EditorPreferences::changeZoom(double)’:
+/workspace/scratch/p009-final-audit/core-check/3bea058/src/EditorPreferences.hpp:37:9: error: this ‘if’ clause does not guard... [-Werror=misleading-indentation]
+   37 |         if(zoom==z)return;zoom=z;if(markDirty)markDirty();notifyUI();
+      |         ^~
+/workspace/scratch/p009-final-audit/core-check/3bea058/src/EditorPreferences.hpp:37:27: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   37 |         if(zoom==z)return;zoom=z;if(markDirty)markDirty();notifyUI();
+      |                           ^~~~
+/workspace/scratch/p009-final-audit/core-check/3bea058/src/EditorPreferences.hpp: In member function ‘void chopper::EditorPreferences::changeHelp(bool)’:
+/workspace/scratch/p009-final-audit/core-check/3bea058/src/EditorPreferences.hpp:40:9: error: this ‘if’ clause does not guard... [-Werror=misleading-indentation]
+   40 |         if(help==h)return;help=h;if(markDirty)markDirty();notifyUI();
+      |         ^~
+/workspace/scratch/p009-final-audit/core-check/3bea058/src/EditorPreferences.hpp:40:27: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   40 |         if(help==h)return;help=h;if(markDirty)markDirty();notifyUI();
+      |                           ^~~~
+[ 62%] Linking CXX executable chopper_extended_tests
+[ 62%] Built target chopper_extended_tests
+[ 75%] Linking CXX executable chopper_host_tests
+[ 75%] Built target chopper_host_tests
+cc1plus: all warnings being treated as errors
+gmake[2]: *** [CMakeFiles/chopper_registry_tests.dir/build.make:79: CMakeFiles/chopper_registry_tests.dir/tests/EditorPreferencesTests.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:1116: CMakeFiles/chopper_registry_tests.dir/all] Error 2
+gmake[1]: *** Waiting for unfinished jobs....
+[ 87%] Linking CXX executable chopper_core_tests
+[ 87%] Built target chopper_core_tests
+gmake: *** [Makefile:101: all] Error 2
+Unmodified GCC build 3bea0580c10fb30943c405b230bdf3268519c6e2 exit 2
+/workspace/scratch/p009-final-audit/core-check/3bea058/src/EditorPreferences.hpp:37:9: error: this ‘if’ clause does not guard... [-Werror=misleading-indentation]
+/workspace/scratch/p009-final-audit/core-check/3bea058/src/EditorPreferences.hpp:40:9: error: this ‘if’ clause does not guard... [-Werror=misleading-indentation]
+Internal ctest changing into directory: /workspace/scratch/p009-final-audit/core-check/3bea058/stock
+Test project /workspace/scratch/p009-final-audit/core-check/3bea058/stock
+    Start 1: core_contract
+1/4 Test #1: core_contract ....................   Passed    0.11 sec
+    Start 2: extended_contract
+2/4 Test #2: extended_contract ................   Passed    0.32 sec
+    Start 3: host_engine_contract
+3/4 Test #3: host_engine_contract .............   Passed    0.03 sec
+    Start 4: release_negative_control
+4/4 Test #4: release_negative_control .........   Passed    0.00 sec
+
+100% tests passed, 0 tests failed out of 4
+
+Total Test time (real) =   0.47 sec
+-- The CXX compiler identification is GNU 14.2.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Configuring done (0.2s)
+-- Generating done (0.0s)
+-- Build files have been written to: /workspace/scratch/p009-final-audit/core-check/3bea058/diagnostic
+[ 12%] Building CXX object CMakeFiles/chopper_core_tests.dir/tests/CoreTests.cpp.o
+[ 25%] Building CXX object CMakeFiles/chopper_registry_tests.dir/tests/EditorPreferencesTests.cpp.o
+[ 37%] Building CXX object CMakeFiles/chopper_extended_tests.dir/tests/ExtendedTests.cpp.o
+[ 50%] Building CXX object CMakeFiles/chopper_host_tests.dir/tests/HostEngineTests.cpp.o
+In file included from /workspace/scratch/p009-final-audit/core-check/3bea058/tests/EditorPreferencesTests.cpp:1:
+/workspace/scratch/p009-final-audit/core-check/3bea058/src/EditorPreferences.hpp: In member function ‘void chopper::EditorPreferences::changeZoom(double)’:
+/workspace/scratch/p009-final-audit/core-check/3bea058/src/EditorPreferences.hpp:37:9: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   37 |         if(zoom==z)return;zoom=z;if(markDirty)markDirty();notifyUI();
+      |         ^~
+/workspace/scratch/p009-final-audit/core-check/3bea058/src/EditorPreferences.hpp:37:27: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   37 |         if(zoom==z)return;zoom=z;if(markDirty)markDirty();notifyUI();
+      |                           ^~~~
+/workspace/scratch/p009-final-audit/core-check/3bea058/src/EditorPreferences.hpp: In member function ‘void chopper::EditorPreferences::changeHelp(bool)’:
+/workspace/scratch/p009-final-audit/core-check/3bea058/src/EditorPreferences.hpp:40:9: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   40 |         if(help==h)return;help=h;if(markDirty)markDirty();notifyUI();
+      |         ^~
+/workspace/scratch/p009-final-audit/core-check/3bea058/src/EditorPreferences.hpp:40:27: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   40 |         if(help==h)return;help=h;if(markDirty)markDirty();notifyUI();
+      |                           ^~~~
+[ 62%] Linking CXX executable chopper_extended_tests
+[ 62%] Built target chopper_extended_tests
+[ 75%] Linking CXX executable chopper_registry_tests
+[ 75%] Built target chopper_registry_tests
+[ 87%] Linking CXX executable chopper_host_tests
+[100%] Linking CXX executable chopper_core_tests
+[100%] Built target chopper_host_tests
+[100%] Built target chopper_core_tests
+Internal ctest changing into directory: /workspace/scratch/p009-final-audit/core-check/3bea058/diagnostic
+UpdateCTestConfiguration  from :/workspace/scratch/p009-final-audit/core-check/3bea058/diagnostic/DartConfiguration.tcl
+Parse Config file:/workspace/scratch/p009-final-audit/core-check/3bea058/diagnostic/DartConfiguration.tcl
+UpdateCTestConfiguration  from :/workspace/scratch/p009-final-audit/core-check/3bea058/diagnostic/DartConfiguration.tcl
+Parse Config file:/workspace/scratch/p009-final-audit/core-check/3bea058/diagnostic/DartConfiguration.tcl
+Test project /workspace/scratch/p009-final-audit/core-check/3bea058/diagnostic
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: core_contract
+
+1: Test command: /workspace/scratch/p009-final-audit/core-check/3bea058/diagnostic/chopper_core_tests
+1: Working Directory: /workspace/scratch/p009-final-audit/core-check/3bea058/diagnostic
+1: Test timeout computed to be: 1500
+1: Core contract PASS
+1/5 Test #1: core_contract ....................   Passed    0.12 sec
+test 2
+    Start 2: extended_contract
+
+2: Test command: /workspace/scratch/p009-final-audit/core-check/3bea058/diagnostic/chopper_extended_tests
+2: Working Directory: /workspace/scratch/p009-final-audit/core-check/3bea058/diagnostic
+2: Test timeout computed to be: 1500
+2: P009 parser and clock rollback PASS
+2: P002 parameter and envelope contract PASS
+2/5 Test #2: extended_contract ................   Passed    0.31 sec
+test 3
+    Start 3: host_engine_contract
+
+3: Test command: /workspace/scratch/p009-final-audit/core-check/3bea058/diagnostic/chopper_host_tests
+3: Working Directory: /workspace/scratch/p009-final-audit/core-check/3bea058/diagnostic
+3: Test timeout computed to be: 1500
+3: HostEngine bypass, pending recall and coherent snapshot PASS
+3/5 Test #3: host_engine_contract .............   Passed    0.02 sec
+test 4
+    Start 4: editor_registry_reentrancy
+
+4: Test command: /workspace/scratch/p009-final-audit/core-check/3bea058/diagnostic/chopper_registry_tests
+4: Working Directory: /workspace/scratch/p009-final-audit/core-check/3bea058/diagnostic
+4: Test timeout computed to be: 1500
+4: P009_REENTRANT_REGISTRY_PASS
+4/5 Test #4: editor_registry_reentrancy .......   Passed    0.00 sec
+test 5
+    Start 5: release_negative_control
+
+5: Test command: /workspace/scratch/p009-final-audit/core-check/3bea058/diagnostic/chopper_core_tests "--negative"
+5: Working Directory: /workspace/scratch/p009-final-audit/core-check/3bea058/diagnostic
+5: Test timeout computed to be: 1500
+5: FAIL: intentional Release negative
+5/5 Test #5: release_negative_control .........   Passed    0.00 sec
+
+100% tests passed, 0 tests failed out of 5
+
+Total Test time (real) =   0.46 sec

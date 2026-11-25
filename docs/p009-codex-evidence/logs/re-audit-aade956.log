@@ -1,0 +1,27 @@
+clock sample 511 expected 0.25566666666667 positive 0.25566666666667 held 0.1705 mixed 0.25566666666667
+PASS tempo-only positive and 120 BPM counterfactual
+PASS valid tempo survives bad meter
+PASS C09 per-instance clock persists, restarted phase
+C01 meter variant 0 output at sample 18024=1
+PASS C01 meter-only and both flags vs. unchanged counterfactual
+C01 meter variant 1 output at sample 18024=0
+PASS C01 meter-only and both flags vs. unchanged counterfactual
+C01 meter variant 2 output at sample 18024=1
+PASS C01 meter-only and both flags vs. unchanged counterfactual
+PASS C02 valid v1 bytes round trip exactly
+C02 full-count failure reads=16/16 writes=16/16
+PASS C02 stream failures reject without state mutation
+C02 successful short count reads=16/16 writes=16/16
+PASS C02 stream failures reject without state mutation
+C03 format 0 cell count=16/16
+PASS C03 mono/stereo in-place/out-of-place activation matrix
+C03 format 1 cell count=16/16
+PASS C03 mono/stereo in-place/out-of-place activation matrix
+PASS C07 doubled signs denied with rollback
+PASS C07 signed controls accepted
+PASS C08 extreme setup rejected with exact continuing phase and gain
+MIX ramp max error 0
+PASS analytic MIX at 256 vs 4x64
+20 waveform combinations max error=9.9920072216264e-16
+PASS five shape and stereo bounded sample-rate matrix
+PASS 64-bit in-place nonfinite/silence/recovery

@@ -1,0 +1,10 @@
+17-file-control accepted with 17 files
+bad-icon rejected with missing or altered SDK folder icon metadata
+missing-notice rejected with missing mandatory bundle resource or notice
+extra-bundle-root rejected with unexpected bundle layout
+missing-moduleinfo accepted with 16 files
+stray-resource accepted with 18 files
+FAIL exact 17-file inventory: missing moduleinfo and stray Contents file accepted
+PASS scoped Lab plan: 13 parameter IDs, 29 geometry-checked actions and both hashes
+FAIL test identity in report gate: 57 duplicates satisfy both workflow regex checks
+FAIL paced energy gate discrimination: constant x0.5 passes both ratios at 0.25

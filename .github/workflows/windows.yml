@@ -1,0 +1,246 @@
+name: Windows x64 VST3 and core contracts
+on:
+  push:
+    branches: [main]
+    paths: ['src/**','tests/**','CMakeLists.txt','.github/workflows/windows.yml','tools/**','resources/**','.gitattributes']
+  workflow_dispatch:
+jobs:
+  portable:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unmodified portable Release build and tests
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCHOPPER_BUILD_VST3=OFF
+          cmake --build build --parallel 4
+          ctest --test-dir build --output-on-failure
+  build:
+    needs: portable
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - name: Provision pinned FFmpeg fixture tool
+        id: ffmpeg
+        shell: pwsh
+        run: |
+          python -m pip install --only-binary=:all: --disable-pip-version-check imageio-ffmpeg==0.6.0 pillow==11.3.0
+          if ($LASTEXITCODE -ne 0) { throw "Pinned FFmpeg wheel installation failed" }
+          $source = python -c "import imageio_ffmpeg; print(imageio_ffmpeg.get_ffmpeg_exe())"
+          if ($LASTEXITCODE -ne 0 -or -not (Test-Path $source -PathType Leaf)) { throw "FFmpeg executable unavailable" }
+          New-Item -ItemType Directory -Force -Path fixture-tools | Out-Null
+          Copy-Item $source fixture-tools/ffmpeg.exe
+          Get-FileHash fixture-tools/ffmpeg.exe -Algorithm SHA256 | Format-List
+          (Resolve-Path fixture-tools).Path | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - name: Prepare original GUI resources
+        shell: pwsh
+        run: |
+          python tools/prepare_native_gui.py gui-draft
+          if ($LASTEXITCODE -ne 0) { throw "GUI resource preparation failed" }
+      - name: Configure
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DCHOPPER_BUILD_VST3=ON
+      - name: Compile
+        run: cmake --build build --config Release --parallel --target chopper_core_tests chopper_extended_tests chopper_host_tests chopper_registry_tests chopper_native_tests chopper_gui_resources validator
+      - name: Core and host-engine tests
+        run: ctest --test-dir build -C Release --output-on-failure
+      - name: Verify exact staged Windows bundle and run SDK validator
+        shell: pwsh
+        run: |
+          $bundles = @(Get-ChildItem build -Recurse -Directory -Filter '125A Chopperator.vst3')
+          if ($bundles.Count -ne 1) { throw "Expected exactly one built plugin bundle" }
+          New-Item -ItemType Directory -Force -Path artifact | Out-Null
+          Copy-Item $bundles[0].FullName artifact -Recurse
+          $plugin = Resolve-Path 'artifact/125A Chopperator.vst3'
+          $binary = Join-Path $plugin 'Contents/x86_64-win/125A Chopperator.vst3'
+          if (-not (Test-Path $binary -PathType Leaf)) { throw "Plugin bundle and inner binary naming mismatch" }
+          $resources = Join-Path $plugin 'Contents/Resources'
+          foreach ($pair in @(@('Steinberg-VST3-LICENSE.txt','build/_deps/vst3sdk-src/LICENSE.txt'),@('VSTGUI-LICENSE.txt','build/_deps/vst3sdk-src/vstgui4/LICENSE'))) {
+            $actual = Join-Path $resources $pair[0]
+            if (-not (Test-Path $actual -PathType Leaf) -or -not (Test-Path $pair[1] -PathType Leaf)) { throw "Missing required license notice" }
+            if ((Get-FileHash $actual).Hash -ne (Get-FileHash $pair[1]).Hash) { throw "License notice hash mismatch" }
+          }
+          $validator = @(Get-ChildItem build -Recurse -File -Filter validator.exe | Where-Object { $_.FullName -match 'Release' })
+          if ($validator.Count -ne 1) { throw "Expected exactly one Release validator" }
+          & $validator[0].FullName $plugin.Path
+          if ($LASTEXITCODE -ne 0) { throw "VST3 validation failed" }
+          $native = @(Get-ChildItem build -Recurse -File -Filter chopper_native_tests.exe | Where-Object { $_.FullName -match 'Release' })
+          if ($native.Count -ne 1) { throw "Expected one native host test" }
+          & $native[0].FullName $plugin.Path
+          if ($LASTEXITCODE -ne 0) { throw "Native VST3 functional tests failed" }
+          $negative = & $native[0].FullName $plugin.Path --negative-spectrum 2>&1
+          $negativeExit = $LASTEXITCODE
+          $negative | Write-Host
+          if ($negativeExit -ne 1 -or ($negative -join ' ') -notmatch 'FAIL SINE carrier oracle') { throw "Spectral negative control did not detect wrong expected carrier" }
+          Write-Host "SPECTRAL_NEGATIVE_CONTROL_PASS"
+          # GitHub pwsh appends an exit using LASTEXITCODE; the intentional failure
+          # above is consumed only after its exit code and diagnostic are verified.
+          exit 0
+      - name: Native editor interaction and resize
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path evidence | Out-Null
+          $plugin = Resolve-Path 'artifact/125A Chopperator.vst3'
+          $native = @(Get-ChildItem build -Recurse -File -Filter chopper_native_tests.exe | Where-Object { $_.FullName -match 'Release' })
+          $resources = Join-Path $plugin 'Contents/Resources'
+          foreach ($name in @('chopper.uidesc','logo.png','logo_3x.png','knob_L_0.5x.png','knob_L_0.75x.png','knob_L_200.png','knob_L_1.5x.png','knob_S_0.5x.png','knob_S_0.75x.png','knob_S_200.png','knob_S_1.5x.png')) {
+            if (-not (Test-Path (Join-Path $resources $name) -PathType Leaf)) { throw "Missing staged GUI resource $name" }
+          }
+          $env:CHOPPER_GUI_TRACE = '1'
+          & $native[0].FullName $plugin.Path --editor (Resolve-Path evidence).Path
+          $editorExit = $LASTEXITCODE
+          # Separate fresh processes ensure a preview failure cannot prevent
+          # corner/help/recall diagnostics, or vice versa.
+          $env:CHOPPER_GUI_TRACE = '1'
+          & $native[0].FullName $plugin.Path --preview (Resolve-Path evidence).Path
+          $previewExit = $LASTEXITCODE
+          Remove-Item Env:CHOPPER_GUI_TRACE
+          Write-Host "NATIVE_GUI_GATE editor=$editorExit preview=$previewExit"
+          if ($editorExit -ne 0 -or $previewExit -ne 0) { throw "Native GUI interaction or timing display failed" }
+          exit 0
+      - name: Native resource corruption and editor lifecycle
+        shell: pwsh
+        run: |
+          $plugin = (Resolve-Path 'artifact/125A Chopperator.vst3').Path
+          $native = @(Get-ChildItem build -Recurse -File -Filter chopper_native_tests.exe | Where-Object { $_.FullName -match 'Release' })
+          & $native[0].FullName $plugin --resource-positive
+          if ($LASTEXITCODE -ne 0) { throw "Editor lifecycle failed" }
+          foreach ($name in @('logo_3x.png','knob_L_1.5x.png','logo.png','knob_S_0.75x.png')) {
+            $folder = Join-Path $PWD ("negative-" + $name)
+            New-Item -ItemType Directory -Force -Path $folder | Out-Null
+            Copy-Item $plugin $folder -Recurse
+            $copy = Join-Path $folder '125A Chopperator.vst3'
+            $resource = Join-Path $copy ("Contents/Resources/" + $name)
+            if (-not (Test-Path $resource -PathType Leaf)) { throw "Negative fixture missing original asset: $name" }
+            if ($name -eq 'knob_S_0.75x.png') { Remove-Item $resource }
+            else { [IO.File]::WriteAllBytes($resource,[byte[]](1,2,3,4)) }
+            Write-Host "RESOURCE_NEGATIVE_FIXTURE $name"
+            & $native[0].FullName $copy --resource-negative
+            if ($LASTEXITCODE -ne 0) { throw "Damaged or missing resource was not rejected: $name" }
+          }
+      - name: Programme fixture acquisition and native PCM checks
+        shell: pwsh
+        run: |
+          python tools/prepare_programme_fixtures.py fixtures
+          if ($LASTEXITCODE -ne 0) { throw "Fixture acquisition failed" }
+          $plugin = Resolve-Path 'artifact/125A Chopperator.vst3'
+          $native = @(Get-ChildItem build -Recurse -File -Filter chopper_native_tests.exe | Where-Object { $_.FullName -match 'Release' })
+          & $native[0].FullName $plugin.Path --programme (Resolve-Path fixtures).Path
+          if ($LASTEXITCODE -ne 0) { throw "Programme test failed" }
+          New-Item -ItemType Directory -Force -Path evidence | Out-Null
+          Copy-Item fixtures/manifest.json evidence
+          Get-ChildItem fixtures -Filter '*_*.f64le' | ForEach-Object {
+            if ($_.BaseName -match '_(rect|sine)$') {
+              ffmpeg -v error -nostdin -y -f f64le -ar 48000 -ac 2 -i $_.FullName -c:a pcm_s24le ("evidence/" + $_.BaseName + ".wav")
+              if ($LASTEXITCODE -ne 0) { throw "Evidence WAV conversion failed" }
+            }
+          }
+      - name: Independent released 125A Plugin Tester
+        shell: pwsh
+        run: |
+          $url = 'https://github.com/challanger2000/125A-Plugin-Tester-Final/releases/download/v0.2.10/125A_Plugin_Tester.exe'
+          Invoke-WebRequest -Uri $url -OutFile tester.exe
+          if ((Get-FileHash tester.exe -Algorithm SHA256).Hash.ToLowerInvariant() -ne 'b0f386422d107ac6fa8b15c3e1e86113f52b013e277fc94b16d28b929438bfea') { throw "Tester binary hash mismatch" }
+          $plugin = Resolve-Path 'artifact/125A Chopperator.vst3'
+          if (Test-Path tester-reports) { throw "Tester report directory must be fresh" }
+          $beforeHash = (Get-FileHash (Join-Path $plugin 'Contents/x86_64-win/125A Chopperator.vst3')).Hash.ToLowerInvariant()
+          New-Item -ItemType Directory -Path tester-reports | Out-Null
+          ${env:125A_PLUGIN_TESTER_REPORT_DIR} = (Resolve-Path tester-reports).Path
+          $process = Start-Process -FilePath (Resolve-Path tester.exe).Path -ArgumentList @('--portable-test', ('"' + $plugin.Path + '"')) -PassThru
+          if (-not $process.WaitForExit(180000)) { $process.Kill(); throw "Tester timeout" }
+          $process.Refresh()
+          $reports = @(Get-ChildItem tester-reports -Recurse -File -Filter '*125A*txt')
+          foreach ($report in $reports) { Copy-Item $report.FullName evidence; Get-Content $report.FullName }
+          $qa = @($reports | Where-Object { $_.Name -like '*_125A_QA_Report.txt' })
+          if ($process.ExitCode -ne 0 -or $qa.Count -ne 1) { throw "Tester failed or missing report: exit $($process.ExitCode)" }
+          python tools/verify_tester_report.py --selftest
+          if ($LASTEXITCODE -ne 0) { throw "Tester report negative controls failed" }
+          python tools/verify_tester_report.py --report $qa[0].FullName --plugin $plugin.Path --before $beforeHash --out evidence/TESTER-REPORT-IDENTITY.json
+          if ($LASTEXITCODE -ne 0) { throw "Tester report identity/provenance failed" }
+          Get-FileHash (Join-Path $plugin 'Contents/x86_64-win/125A Chopperator.vst3') -Algorithm SHA256 | Format-List
+          Write-Host "INDEPENDENT_TESTER_EXECUTION_PASS"
+      - name: Independent pinned 125A Test Lab technical baseline
+        shell: pwsh
+        run: |
+          $labCommit = '7213fe1f81f4036f74431cb5b2d7dbd09b73ee5c'
+          git init test-lab
+          if ($LASTEXITCODE -ne 0) { throw "Lab init failed" }
+          git -C test-lab fetch --depth=1 https://github.com/challanger2000/125A-Plugin-Test-Lab.git $labCommit
+          if ($LASTEXITCODE -ne 0) { throw "Lab fetch failed" }
+          git -C test-lab checkout --detach FETCH_HEAD
+          if ($LASTEXITCODE -ne 0 -or (git -C test-lab rev-parse HEAD) -ne $labCommit) { throw "Lab source identity mismatch" }
+          $sdk = (Resolve-Path build/_deps/vst3sdk-src).Path
+          cmake -S test-lab -B lab-build -G "Visual Studio 17 2022" -A x64 "-DFETCHCONTENT_SOURCE_DIR_VST3SDK=$sdk"
+          if ($LASTEXITCODE -ne 0) { throw "Lab configuration failed" }
+          cmake --build lab-build --config Release --parallel --target TestLabHost TestLabGUI TestLabStateStress
+          if ($LASTEXITCODE -ne 0) { throw "Lab compilation failed" }
+          function Find-Host($name) {
+            $matches = @(Get-ChildItem lab-build -Recurse -File -Filter $name | Where-Object { $_.FullName -match 'Release' })
+            if ($matches.Count -ne 1) { throw "Expected exactly one Lab host: $name" }
+            return $matches[0].FullName
+          }
+          $plugin = (Resolve-Path 'artifact/125A Chopperator.vst3').Path
+          $gui = Find-Host '125A_Test_Lab_GUI.exe'
+          $audio = Find-Host '125A_Test_Lab_Host.exe'
+          $stress = Find-Host '125A_Test_Lab_State_Stress.exe'
+          python test-lab/tests/run_universal_qa.py --plugin "$plugin" --gui-host "$gui" --audio-host "$audio" --stress-host "$stress" --run-technical-baseline --timeout 110 --out evidence/test-lab
+          if ($LASTEXITCODE -ne 0) { throw "Independent Lab technical baseline failed" }
+          $report = Get-Content evidence/test-lab/UNIVERSAL-QA-RESULT.json -Raw | ConvertFrom-Json
+          if ($report.status -ne 'TECHNICAL_BASELINE_PASS' -or $report.release_approved -ne $false) { throw "Lab evidence incomplete" }
+          python tools/prepare_lab_control_plan.py --plugin "$plugin" --gui-host "$gui" --out evidence/lab-controls
+          if ($LASTEXITCODE -ne 0) { throw "Product control plan creation failed" }
+          python test-lab/tests/run_product_test_plan.py --plan evidence/lab-controls/approved-plan.json --coverage-matrix evidence/lab-controls/features.json --out evidence/lab-controls/results --timeout 110
+          if ($LASTEXITCODE -ne 0) { throw "Independent declared control coverage failed" }
+          $coverage = Get-Content evidence/lab-controls/results/PRODUCT-TEST-PLAN-RESULT.json -Raw | ConvertFrom-Json
+          if ($coverage.status -ne 'CONTRACT_PASS' -or $coverage.required_feature_coverage -ne 'REQUIRED_COVERAGE_COMPLETE' -or $coverage.declared_cases -ne 13 -or $coverage.passed_cases -ne 13 -or $coverage.failed_cases -ne 0 -or $coverage.not_run_cases -ne 0 -or $coverage.release_approved -ne $false) { throw "Declared 13-control evidence incomplete" }
+      - name: Verify exact candidate archive and extracted bundle
+        shell: pwsh
+        run: |
+          $infoTool = @(Get-ChildItem build -Recurse -File -Filter moduleinfotool.exe | Where-Object { $_.FullName -match 'Release' })
+          if ($infoTool.Count -ne 1) { throw "Exact SDK moduleinfotool unavailable" }
+          & $infoTool[0].FullName -validate -path (Resolve-Path 'artifact/125A Chopperator.vst3').Path
+          if ($LASTEXITCODE -ne 0) { throw "Module metadata invalid" }
+          python tools/test_archive_negatives.py --root artifact --sdk build/_deps/vst3sdk-src --infotool $infoTool[0].FullName --evidence evidence/archive-negatives
+          if ($LASTEXITCODE -ne 0) { throw "Archive negative controls failed" }
+          python tools/verify_candidate_archive.py --root artifact --out distribution --extract clean-archive --evidence evidence --sdk build/_deps/vst3sdk-src
+          if ($LASTEXITCODE -ne 0) { throw "Candidate archive verification failed" }
+          $plugin = (Resolve-Path 'clean-archive/125A Chopperator.vst3').Path
+          $validator = @(Get-ChildItem build -Recurse -File -Filter validator.exe | Where-Object { $_.FullName -match 'Release' })
+          $native = @(Get-ChildItem build -Recurse -File -Filter chopper_native_tests.exe | Where-Object { $_.FullName -match 'Release' })
+          if ($validator.Count -ne 1 -or $native.Count -ne 1) { throw "Exact validation hosts unavailable" }
+          & $validator[0].FullName $plugin
+          if ($LASTEXITCODE -ne 0) { throw "Extracted candidate validator failed" }
+          & $native[0].FullName $plugin --resource-positive
+          if ($LASTEXITCODE -ne 0) { throw "Extracted candidate editor failed" }
+          Write-Host "P009_EXTRACTED_CANDIDATE_PASS"
+      - name: Generate bilingual PDF manuals and verified V1.0 customer ZIP
+        shell: pwsh
+        run: |
+          python -m pip install --only-binary=:all: --disable-pip-version-check reportlab==4.4.9 pymupdf==1.26.7
+          if ($LASTEXITCODE -ne 0) { throw "Manual dependency installation failed" }
+          python tools/build_release_package.py --candidate distribution/125A-Chopperator-P009-Windows-x64-candidate.zip --screenshot evidence/native-editor.bmp --out customer --evidence evidence
+          if ($LASTEXITCODE -ne 0) { throw "Customer package or manual validation failed" }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: 125A-Chopperator-V1.0-Windows-x64
+          path: customer/125A-Chopperator-V1.0-Windows-x64.zip
+          if-no-files-found: error
+      - name: Generate static GUI draft with original 125A assets
+        if: always() && steps.ffmpeg.outcome == 'success'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path evidence | Out-Null
+          Copy-Item gui-draft/Chopperator-static-draft.svg evidence
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: 125A-Chopperator-P009-QA-evidence
+          path: evidence
+          if-no-files-found: warn
+      - uses: actions/upload-artifact@v4
+        with:
+          name: 125A-Chopperator-P009-Windows-x64-development
+          path: artifact
+      - uses: actions/upload-artifact@v4
+        with:
+          name: 125A-Chopperator-P009-verified-candidate-archive
+          path: distribution
+          if-no-files-found: error

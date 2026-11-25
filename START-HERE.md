@@ -1,0 +1,2 @@
+# 125A Chopperator Final — entry
+Read central 125A Engineering START-HERE and all mandatory/task-relevant standards in full before working. Then read AGENTS.md, CURRENT.md, AKTUELLE-VERSION.md, docs/PRODUCT-CONTRACT.md and CHANGELOG.md. Preserve the independently audited DSP, GUI, automation and state contract. Windows x64 VST3 only. Future development uses an intentional version branch. Unexecuted gates are NOT RUN.

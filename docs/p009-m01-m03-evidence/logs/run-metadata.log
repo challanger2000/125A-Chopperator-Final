@@ -1,0 +1,38 @@
+Run 45506553532 commit a276f0228acf58230ee5ca5c48267f062b5c79c1: Success
+Job portable 138843140206: 5 successful steps
+  1 Set up job: success
+  2 Run actions/checkout@v4: success
+  3 Unmodified portable Release build and tests: success
+  6 Post Run actions/checkout@v4: success
+  7 Complete job: success
+  Public page requires sign-in to view logs
+Job windows 138843229177: 20 successful steps
+  1 Set up job: success
+  2 Run actions/checkout@v4: success
+  3 Provision pinned FFmpeg fixture tool: success
+  4 Prepare original GUI resources: success
+  5 Configure: success
+  6 Compile: success
+  7 Core and host-engine tests: success
+  8 Verify exact staged Windows bundle and run SDK validator: success
+  9 Native editor interaction and resize: success
+  10 Native resource corruption and editor lifecycle: success
+  11 Programme fixture acquisition and native PCM checks: success
+  12 Independent released 125A Plugin Tester: success
+  13 Independent pinned 125A Test Lab technical baseline: success
+  14 Verify exact candidate archive and extracted bundle: success
+  15 Generate static GUI draft with original 125A assets: success
+  16 Run actions/upload-artifact@v4: success
+  17 Run actions/upload-artifact@v4: success
+  18 Run actions/upload-artifact@v4: success
+  36 Post Run actions/checkout@v4: success
+  37 Complete job: success
+  Public page requires sign-in to view logs
+Artifact 14973327568 published sha256:b1663051d81942950cd44a7f4bab940beddd728e0957d0a3f4456927f16d1191
+Artifact 14973327568 download: HTTP 404
+Artifact 14972703147 published sha256:7bc18e6325249a27cdc3e0505723835da5c50ad816a1a993ee7a92211d4b0665
+Artifact 14972703147 download: HTTP 404
+Artifact 14971514705 published sha256:9c88228c2e8492c1708a0a720d8d2af113cd607f858a22e17e254b9068b05752
+Artifact 14971514705 download: HTTP 404
+Windows editor step log: HTTP 404
+Actions logs API: Tunnel connection failed: 403 Forbidden

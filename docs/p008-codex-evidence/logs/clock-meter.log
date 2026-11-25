@@ -1,0 +1,6 @@
+meter variant 0 sample 18024=1
+PASS meter-only reaches dry at 18024
+meter variant 1 sample 18024=0
+PASS 4/4 counterfactual remains closed
+meter variant 2 sample 18024=0
+FAIL valid meter survives NaN tempo

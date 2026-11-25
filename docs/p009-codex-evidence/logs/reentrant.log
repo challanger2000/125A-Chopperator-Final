@@ -1,0 +1,2 @@
+watch calls=1,1 watchers=2
+FAIL synchronous detach during notification: bad_function_call

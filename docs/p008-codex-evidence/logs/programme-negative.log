@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/workspace/125A-Chopperator/tools/prepare_programme_fixtures.py", line 72, in <module>
+    main()
+  File "/workspace/125A-Chopperator/tools/prepare_programme_fixtures.py", line 66, in main
+    name, flac, metadata = get_source(out, spec)
+                           ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/125A-Chopperator/tools/prepare_programme_fixtures.py", line 37, in get_source
+    raise RuntimeError(f"{name}: source integrity mismatch")
+RuntimeError: guitar_e2: source integrity mismatch

@@ -1,0 +1,5 @@
+nonlinear samples compared=50723 maxError=4.7739590058882e-15
+PASS nonlinear 7/8 fractional loop PCM and byte-identical partitions
+PASS float32 mono in-place invalid PCM and extremes
+invalid later lane result=1 prefix MIX=0.75 PCM=1
+PASS invalid lane point rejected retaining valid prefix per P003

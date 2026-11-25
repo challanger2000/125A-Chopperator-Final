@@ -1,0 +1,14 @@
+Run 45512723609 commit 8859e8be9a3aa12a9f5439780d369e273a820e79: Success
+Job portable 138864267703: 5 successful steps
+  Public page requires sign-in to view logs
+Job windows 138864417915: 20 successful steps
+  Step 9 Native editor interaction and resize: success
+  Public page requires sign-in to view logs
+Artifact 14977440471 published sha256:1b04d0dcff486506e649edf9d26baf68c83a1b36b1b41d936364ba66d5d45f70
+Artifact 14977440471 download: HTTP 404
+Artifact 14977420599 published sha256:f9c68f25de96abf643ee795b9e1e38a3dbcb57a1b1ed334d9bcff4e8e93644c5
+Artifact 14977420599 download: HTTP 404
+Artifact 14977116333 published sha256:526bb76d1afba6d40651e7f0572113d312b140884bac040e125c2a9989293964
+Artifact 14977116333 download: HTTP 404
+Windows editor step log: HTTP 404
+Actions logs API: Tunnel connection failed: 403 Forbidden

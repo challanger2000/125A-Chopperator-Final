@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/workspace/125A-Chopperator/tools/prepare_native_gui.py", line 59, in <module>
+    if __name__=="__main__": main()
+                             ^^^^^^
+  File "/workspace/125A-Chopperator/tools/prepare_native_gui.py", line 13, in main
+    draft() # verifies source hashes, strip dimensions, and logo identity
+    ^^^^^^^
+  File "/workspace/125A-Chopperator/tools/prepare_gui_design.py", line 46, in main
+    raw=acquire(raw_url+"125A-Knob-Designer/"+KNOB_COMMIT+"/assets/mixengine/knobs/"+name,path,sha)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/125A-Chopperator/tools/prepare_gui_design.py", line 33, in acquire
+    if actual!=expected: raise RuntimeError(f"Asset mismatch {target.name}")
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Asset mismatch 125A_MixEngine_Analog_L_128px_100pct_128f.png

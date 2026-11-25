@@ -1,0 +1,32 @@
+MIX ramp max error 0
+PASS analytic MIX at 256 vs 4x64
+clock sample 511 expected 0.25566666666667 positive 0.25566666666667 held 0.1705 mixed 0.1705
+PASS tempo-only positive and 120 BPM counterfactual
+FAIL valid tempo survives bad meter
+PASS parser canonical/boundaries
+PASS parser rejects invalid percent
+FAIL parser rejects double sign
+double sign parsed normalized 0.375
+PASS truncated state 120/120 preserves state
+stream read status=0 restored=1 write status=0 reported bytes=120
+FAIL failing stream read preserves state
+FAIL failing stream write reports error
+PASS positive restore and immediate save
+PASS fresh restore exact positive audio
+reconfigured instance without clock sample 511=0.17033333333333 expected fresh default=0.085166666666667
+FAIL new activation clock fallback fresh default (policy probe)
+20 waveform combinations max error=9.9920072216264e-16
+PASS five shape and stereo bounded sample-rate matrix
+PASS 64-bit in-place nonfinite/silence/recovery
+guitar_e2 shape=0 residual=0 wet dB=-3.027005318177
+PASS programme analytically matched stereo
+guitar_e2 shape=4 residual=2.349785339262e-15 wet dB=-4.2479209382819
+PASS programme analytically matched stereo
+guitar_b3 shape=0 residual=0 wet dB=-3.0314789890752
+PASS programme analytically matched stereo
+guitar_b3 shape=4 residual=2.1816631788837e-15 wet dB=-4.2253225417658
+PASS programme analytically matched stereo
+pad_c4 shape=0 residual=0 wet dB=-2.9985927760975
+PASS programme analytically matched stereo
+pad_c4 shape=4 residual=2.2485532533528e-15 wet dB=-4.2358590373986
+PASS programme analytically matched stereo

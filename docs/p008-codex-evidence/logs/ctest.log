@@ -1,0 +1,48 @@
+Internal ctest changing into directory: /workspace/scratch/p008-codex-audit/core-build
+UpdateCTestConfiguration  from :/workspace/scratch/p008-codex-audit/core-build/DartConfiguration.tcl
+Parse Config file:/workspace/scratch/p008-codex-audit/core-build/DartConfiguration.tcl
+UpdateCTestConfiguration  from :/workspace/scratch/p008-codex-audit/core-build/DartConfiguration.tcl
+Parse Config file:/workspace/scratch/p008-codex-audit/core-build/DartConfiguration.tcl
+Test project /workspace/scratch/p008-codex-audit/core-build
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: core_contract
+
+1: Test command: /workspace/scratch/p008-codex-audit/core-build/chopper_core_tests
+1: Working Directory: /workspace/scratch/p008-codex-audit/core-build
+1: Test timeout computed to be: 1500
+1: Core contract PASS
+1/4 Test #1: core_contract ....................   Passed    0.12 sec
+test 2
+    Start 2: extended_contract
+
+2: Test command: /workspace/scratch/p008-codex-audit/core-build/chopper_extended_tests
+2: Working Directory: /workspace/scratch/p008-codex-audit/core-build
+2: Test timeout computed to be: 1500
+2: P002 parameter and envelope contract PASS
+2/4 Test #2: extended_contract ................   Passed    0.39 sec
+test 3
+    Start 3: host_engine_contract
+
+3: Test command: /workspace/scratch/p008-codex-audit/core-build/chopper_host_tests
+3: Working Directory: /workspace/scratch/p008-codex-audit/core-build
+3: Test timeout computed to be: 1500
+3: HostEngine bypass, pending recall and coherent snapshot PASS
+3/4 Test #3: host_engine_contract .............   Passed    0.02 sec
+test 4
+    Start 4: release_negative_control
+
+4: Test command: /workspace/scratch/p008-codex-audit/core-build/chopper_core_tests "--negative"
+4: Working Directory: /workspace/scratch/p008-codex-audit/core-build
+4: Test timeout computed to be: 1500
+4: FAIL: intentional Release negative
+4/4 Test #4: release_negative_control .........   Passed    0.00 sec
+
+100% tests passed, 0 tests failed out of 4
+
+Total Test time (real) =   0.53 sec

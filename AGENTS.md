@@ -1,0 +1,2 @@
+# 125A Chopperator Final — read first
+Owner-designated FULL V1.0 for Windows x64 VST3. Intended customer ZIP: `125A-Chopperator-V1.0-Windows-x64.zip`. Actual package approval/publication pending; see CURRENT.md for precise source, evidence and release status. No Demo baseline. Read START-HERE.md and central 125A Engineering requirements before changes. Future development uses an intentional version branch, not the stable reference.

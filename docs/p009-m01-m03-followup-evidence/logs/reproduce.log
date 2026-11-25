@@ -1,0 +1,4 @@
+Source 8859e8be9a3aa12a9f5439780d369e273a820e79
+M01: both views, no resize request on same-pixel recalls; at 200% DPI 1921x1152 then 1920x1152; dirty=0
+M03: child gone at removed() return; parent released inside callback; DPI rejected, no later frame work; prior acknowledgement=0
+M03: child gone at removed() return; parent released inside callback; DPI rejected, no later frame work; prior acknowledgement=1

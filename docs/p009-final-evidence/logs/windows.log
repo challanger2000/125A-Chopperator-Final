@@ -1,0 +1,31 @@
+GitHub Actions run 45502305140 job 138828442951 commit 3bea0580c10fb30943c405b230bdf3268519c6e2 status Success
+step 1 Set up job: success
+step 2 Run actions/checkout@v4: success
+step 3 Provision pinned FFmpeg fixture tool: success
+step 4 Prepare original GUI resources: success
+step 5 Configure: success
+step 6 Compile: success
+step 7 Core and host-engine tests: success
+step 8 Verify exact staged Windows bundle and run SDK validator: success
+step 9 Native editor interaction and resize: success
+step 10 Native resource corruption and editor lifecycle: success
+step 11 Programme fixture acquisition and native PCM checks: success
+step 12 Independent released 125A Plugin Tester: success
+step 13 Independent pinned 125A Test Lab technical baseline: success
+step 14 Verify exact candidate archive and extracted bundle: success
+step 15 Generate static GUI draft with original 125A assets: success
+step 16 Run actions/upload-artifact@v4: success
+step 17 Run actions/upload-artifact@v4: success
+step 18 Run actions/upload-artifact@v4: success
+step 36 Post Run actions/checkout@v4: success
+step 37 Complete job: success
+published artifact 14972535704 125A-Chopperator-P009-QA-evidence sha256:ac13219e6302c4d5d44516b317e885b471c09f73ce043674abd73045a5112f57
+artifact access 14972535704: HTTP 404
+published artifact 14971293433 125A-Chopperator-P009-Windows-x64-development sha256:2889cbd9c6aed33ec08438508bd367a08e0e282cbb6143339bf5f52a39a22b1a
+artifact access 14971293433: HTTP 404
+published artifact 14971084787 125A-Chopperator-P009-verified-candidate-archive sha256:3d0b02294ecc2acf329623f39af9aac39e4a62f855af8bbb4445431be6cee80f
+artifact access 14971084787: HTTP 404
+Public job page: Sign in to view logs
+API access: Tunnel connection failed: 403 Forbidden
+step 14 log access: HTTP 404
+Verified public result and artifact metadata. Raw job logs and artifact bytes were not retained.

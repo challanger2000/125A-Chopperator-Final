@@ -1,0 +1,16 @@
+17-file-control accepted with 17 files
+bad-icon rejected with missing or altered SDK folder icon metadata
+missing-notice rejected with missing mandatory bundle resource or notice
+extra-bundle-root rejected with bundle inventory mismatch
+missing-moduleinfo rejected with missing mandatory bundle resource
+stray-resource rejected with bundle inventory mismatch
+PASS scoped Lab plan: 13 parameter IDs, 29 geometry-checked actions and both hashes
+Previous regex accepts 57 copies of a single PASS placeholder
+Tester gate accepts complete identity-only synthetic report and records both hashes
+Tester gate rejects repeated placeholders
+Tester gate rejects missing qualified case
+Tester gate rejects wrong version
+Tester gate rejects wrong revision
+Tester gate rejects wrong bundle
+Tester gate rejects warning
+Tester gate rejects module-byte change after capturing baseline SHA-256

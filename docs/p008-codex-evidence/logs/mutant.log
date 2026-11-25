@@ -1,0 +1,2 @@
+MIX ramp max error 0.99609375
+FAIL analytic MIX at 256 vs 4x64
