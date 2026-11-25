@@ -39,6 +39,12 @@ if(CHOPPER_BUILD_VST3)
     GIT_TAG v3.8.1_build_84
     GIT_SUBMODULES_RECURSE TRUE)
   FetchContent_MakeAvailable(vst3sdk)
+  if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    execute_process(COMMAND ${CMAKE_COMMAND}
+      "-DVSTGUI_ROOT=${vst3sdk_SOURCE_DIR}/vstgui4"
+      -P "${CMAKE_CURRENT_SOURCE_DIR}/tools/patch_vstgui_linux.cmake"
+      COMMAND_ERROR_IS_FATAL ANY)
+  endif()
   smtg_add_vst3plugin(Chopperator PACKAGE_NAME "125A Chopperator" SOURCES_LIST src/Vst3.cpp)
   target_compile_features(Chopperator PRIVATE cxx_std_20)
   target_link_libraries(Chopperator PRIVATE sdk vstgui_support)

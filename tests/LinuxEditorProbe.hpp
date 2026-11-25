@@ -169,6 +169,33 @@ void linuxEditorProbe(const VST3::Hosting::Module::Ptr& module,const std::filesy
                 ViewRect normal{0,0,960,576};require(frame->resizeView(view.get(),&normal)==kResultOk,"native resize restore");
                 frame->pump(60);
                 require(n.save()==baseline,"restored GUI controls preserve component state");
+                // Two independent native instances share the SDK's XCB connection.
+                // Closing either must not finish the peer's Cairo device.
+                Native peer(module);
+                Window pw=XCreateSimpleWindow(d,DefaultRootWindow(d),900,30,960,576,0,0,0);
+                XMapRaised(d,pw);XSync(d,False);
+                auto peerFrame=owned(new LinuxFrame(d,pw));
+                auto peerView=owned(peer.controller->createView(ViewType::kEditor));
+                require(peerView&&peerView->setFrame(peerFrame.get())==kResultOk,"peer editor frame");
+                require(peerView->attached(reinterpret_cast<void*>(static_cast<uintptr_t>(pw)),kPlatformTypeX11EmbedWindowID)==kResultOk,"peer attach");
+                embedChild(d,pw);frame->pump(300);
+                require(peerView->removed()==kResultOk,"peer detach");frame->pump(100);XSync(d,False);
+                require(childCount(d,pw)==0,"peer child destroyed while first survives");
+                require(peerView->setFrame(nullptr)==kResultOk,"clear peer frame");
+                XDestroyWindow(d,pw);XSync(d,False);
+                click(650,34);require(n.controller->getParamNormalized(111)==1,"survivor ACTIVE ON");
+                click(573,34);require(n.controller->getParamNormalized(111)==0,"survivor ACTIVE OFF");
+                // Require actual repaint after peer closure, not merely controller state.
+                frame->pump(100);
+                auto* survivor=XGetImage(d,w,0,0,960,576,AllPlanes,ZPixmap);require(survivor,"survivor screenshot");
+                int liveOrange=0;
+                for(int y=80;y<165;++y)for(int x=25;x<935;++x){
+                    auto p=XGetPixel(survivor,x,y);
+                    if(channel(p,survivor->red_mask)>190&&channel(p,survivor->green_mask)>95&&channel(p,survivor->green_mask)<195&&channel(p,survivor->blue_mask)<110)++liveOrange;
+                }
+                XDestroyImage(survivor);
+                require(liveOrange>500,"survivor timing display after peer closure");
+                std::cout<<"LINUX_PEER_CLOSE_SURVIVOR_PASS\n";
             }
             std::cerr<<"LINUX_DETACH_BEGIN cycle="<<cycle<<"\n";
             require(view->removed()==kResultOk,"Linux editor detach");frame->pump(50);XSync(d,False);

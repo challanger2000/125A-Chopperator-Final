@@ -63,7 +63,7 @@ jobs:
           xvfb-run -a -s '-screen 0 1920x1080x24' "$NATIVE" "$PLUGIN" --editor evidence 2>&1 | tee evidence/linux-editor.txt
           rc=${PIPESTATUS[0]}
           set -e
-          if [ "$rc" = 139 ]; then
+          if [ "$rc" = 139 ] || [ "$rc" = 134 ]; then
             xvfb-run -a -s '-screen 0 1920x1080x24' gdb -batch -ex run -ex 'thread apply all bt' --args "$NATIVE" "$PLUGIN" --editor evidence 2>&1 | tee evidence/linux-editor-backtrace.txt
           fi
           test "$rc" = 0
